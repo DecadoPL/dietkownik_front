@@ -1,0 +1,195 @@
+<div class="container">
+
+  <app-alert [message]="alertMsg" *ngIf="alert" (cancel)="alertCancel()" (save)="alertSave()" (discard)="alertDiscard()"></app-alert>
+  
+  <div class="row">
+    <form [formGroup]="dietRequirementsForm" (ngSubmit)="onSubmit()">
+      
+      <button type="submit" class="btn btn-primary" [disabled]="!requireSave">Save</button>
+      <hr>
+      Diet Requirements Id: {{this.dietRequirementsForm.get('id')?.value}}
+
+      <div class="formGroup">
+        <label for="name"> Diet Requirements name</label>
+        <input type="text" id="name" formControlName="name" class="form-control" style="width:300px;">
+        <span *ngIf="!dietRequirementsForm.get('name')?.valid && dietRequirementsForm.get('name')?.touched" class="text-danger">
+          Please enter a valid  Diet Requirements name
+        </span>
+      </div>
+
+      <div class="formGroup">
+        <label for="requiredTags">Required Tags</label>
+        <select  formControlName="requiredTags" multiple class="form-control" style="width:300px;">
+          <option *ngFor="let TagListItem of allTags" [value]="TagListItem.name">
+            {{ TagListItem.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formGroup">
+        <label for="prohibitedTags">Prohibited Tags</label>
+        <select  formControlName="prohibitedTags" multiple class="form-control" style="width:300px;">
+          <option *ngFor="let TagListItem of allTags" [value]="TagListItem.name">
+            {{ TagListItem.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formGroup">
+        <label for="requiredIngredients">Required Ingredients</label>
+        <select  formControlName="requiredIngredients" multiple class="form-control" style="width:300px;">
+          <option *ngFor="let ingr of allIngredients" [value]="ingr.name">
+            {{ ingr.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formGroup">
+        <label for="prohibitedIngredients">Prohibited Ingredients</label>
+        <select  formControlName="prohibitedIngredients" multiple class="form-control" style="width:300px;">
+          <option *ngFor="let ingr of allIngredients" [value]="ingr.name">
+            {{ ingr.name }}
+          </option>
+        </select>
+      </div>
+
+      
+      
+
+      <div formGroupName="macro">
+        <div class="formGroup">
+          <label for="proteins">Proteins in 100g</label>
+          <input type="text" id="proteins" formControlName="proteins" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('prot')?.valid && dietRequirementsForm.get('proteins')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="carbohydrates">Carbohydrates in 100g</label>
+          <input type="text" id="carbohydrates" formControlName="carbohydrates" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('carbohydrates')?.valid && dietRequirementsForm.get('carbohydrates')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="fat">Fat in 100g</label>
+          <input type="text" id="fat" formControlName="fat" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('fat')?.valid && dietRequirementsForm.get('fat')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="fibers">Fiber in 100g</label>
+          <input type="text" id="fibers" formControlName="fibers" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('fibers')?.valid && dietRequirementsForm.get('fibers')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="cholesterol">Cholesterol in 100g</label>
+          <input type="text" id="cholesterol" formControlName="cholesterol" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('cholesterol')?.valid && dietRequirementsForm.get('cholesterol')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="kcal">Kcal in 100g: </label>
+          {{this.dietRequirementsForm.get('macro')?.get('kcal')?.value}}
+        </div>
+      </div>
+
+
+      <div formGroupName="micro">
+
+        <div class="formGroup">
+          <label for="potassium">potassium in 100g</label>
+          <input type="text" id="potassium" formControlName="potassium" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('potassium')?.valid && dietRequirementsForm.get('potassium')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="sodium">sodium in 100g</label>
+          <input type="text" id="sodium" formControlName="sodium" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('sodium')?.valid && dietRequirementsForm.get('sodium')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="vitaminA">vitaminA in 100g</label>
+          <input type="text" id="vitaminA" formControlName="vitaminA" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('vitaminA')?.valid && dietRequirementsForm.get('vitaminA')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="vitaminC">vitaminC in 100g</label>
+          <input type="text" id="vitaminC" formControlName="vitaminC" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('vitaminC')?.valid && dietRequirementsForm.get('vitaminC')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="vitaminB6">vitaminB6 in 100g</label>
+          <input type="text" id="vitaminB6" formControlName="vitaminB6" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('vitaminB6')?.valid && dietRequirementsForm.get('vitaminB6')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="magnesium">magnesium in 100g</label>
+          <input type="text" id="magnesium" formControlName="magnesium" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('magnesium')?.valid && dietRequirementsForm.get('magnesium')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="vitaminD">vitaminD in 100g</label>
+          <input type="text" id="vitaminD" formControlName="vitaminD" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('vitaminD')?.valid && dietRequirementsForm.get('vitaminD')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="vitaminB12">vitaminB12 in 100g</label>
+          <input type="text" id="vitaminB12" formControlName="vitaminB12" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('vitaminB12')?.valid && dietRequirementsForm.get('vitaminB12')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="calcium">calcium in 100g</label>
+          <input type="text" id="calcium" formControlName="calcium" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('calcium')?.valid && dietRequirementsForm.get('calcium')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="iron">iron in 100g</label>
+          <input type="text" id="iron" formControlName="iron" class="form-control" style="width:300px;">
+          <span *ngIf="!dietRequirementsForm.get('iron')?.valid && dietRequirementsForm.get('iron')?.touched" class="text-danger">
+            Please enter a valid amount from range 0 - 1000
+          </span>
+        </div>
+
+      </div>
+
+
+    </form>
+
+  </div>
+</div>

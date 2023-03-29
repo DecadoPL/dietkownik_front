@@ -1,0 +1,17 @@
+<div class="container">
+
+  <button type="button" class="btn btn-primary" 
+  routerLink="/dietRequirements/new">Add new</button>
+
+  <hr>
+  <table>
+    <tr *ngFor="let dr of $dietRequirementsList">
+      <th style="width:300px;"><app-diet-requirements-list-item
+        [dietRequirements]="dr"
+        [index]="dr.id"
+        ></app-diet-requirements-list-item></th>
+      <th><button (click)="deleteItem(dr.id)">delete</button></th>
+    </tr>
+  </table>
+
+</div>

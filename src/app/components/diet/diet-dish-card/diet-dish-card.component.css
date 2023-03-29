@@ -1,0 +1,7 @@
+[class*='col']{
+  border: 1px solid;
+}
+
+[class*='col'] + [class*='col']{
+  border-left:0 ;
+}

@@ -1,0 +1,25 @@
+<div class="container">
+
+  <button type="button" class="btn btn-primary" 
+  routerLink="/dishes/new">Add new</button>
+
+  <hr>
+  <table>
+    <tr *ngFor="let dish of dishes">
+      <th style="width:300px;"><app-dish-list-item
+        [dish]="dish"
+        [index]="dish.id"
+        ></app-dish-list-item></th>
+      <th><button (click)="deleteItem(dish.id)">delete</button></th>
+    </tr>
+  </table>
+
+
+</div>
+
+
+
+
+
+
+

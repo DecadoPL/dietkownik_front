@@ -1,0 +1,17 @@
+<div class="container">
+
+  <button class="btn btn-primary" routerLink="/diets/new">Add new</button>
+  <hr>
+
+  <table>
+    <tr *ngFor="let diet of diets">
+      <th style="width:300px;"> <app-diet-list-item
+        [diet]="diet"
+        [index]="diet.id"
+        ></app-diet-list-item></th>
+      <th><button (click)="deleteItem(diet.id)">delete</button></th>
+
+    </tr>
+  </table>
+
+</div>
