@@ -275,12 +275,10 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
     this.diet.description = this.dietForm.get('description')?.value;
 
     if(this.diet.id != 0){
-      //this.dietService.updateDiet(this.diet).subscribe();
+      this.dietService.updateDiet(this.diet).subscribe();
     }else{
-     // this.dietService.addDiet(this.diet).subscribe();
+      this.dietService.addDiet(this.diet).subscribe();
     } 
-    console.log("this.diet submit", this.diet)
-
     this.requireSave = false;
   }
 
