@@ -107,9 +107,9 @@
       [dishIndex] = "dishIndex"
       (deleteCard) = "deleteDish($event)"
     ></app-diet-dish-card>
- 
+
     <input
-    id="typeahead-prevent-manual-entry"
+    [id]="'dishSearchInput'+dayId"
     type="text"
     class="form-control"
     [(ngModel)]="newDish"

@@ -78,8 +78,6 @@
               <th>{{this.dishForm.get('macro')?.get('fat')?.value}}</th>
               <th>{{this.dishForm.get('macro')?.get('kcal')?.value}}</th>
               <th></th>
-              <th></th>
-              <th></th>
             </tr>
             <tr>
               <th>Name</th>
@@ -87,8 +85,6 @@
               <th>Carb</th>
               <th>Fat</th>
               <th>Kcal</th>
-              <th>Group</th>
-              <th>Type</th>
               <th>Quantity</th>
               <th>Portion Type</th>
             </tr>
@@ -98,9 +94,7 @@
               <td>{{this.ingredient.get('proteins')?.value}}</td>
               <td>{{this.ingredient.get('carbohydrates')?.value}}</td>
               <td>{{this.ingredient.get('fat')?.value}}</td>
-              <td>{{this.ingredient.get('kcal')?.value}}</td>
-              <td>{{this.ingredient.get('foodGroup')?.value}}</td>       
-              <td>{{this.ingredient.get('foodType')?.value}}</td>             
+              <td>{{this.ingredient.get('kcal')?.value}}</td>           
               <td><input type="text" formControlName="portionQuantity" style="width:50px;" ></td>
               <td>
                 <select  formControlName="portionType" class="form-control" style="width:100px;">
@@ -114,7 +108,7 @@
             </tr>
           </table>
           <input
-            id="typeahead-prevent-manual-entry"
+            id="ingredientSearchInput"
             type="text"
             class="form-control"
             [(ngModel)]="newIngr"

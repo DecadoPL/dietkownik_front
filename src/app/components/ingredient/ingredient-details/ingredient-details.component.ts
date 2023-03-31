@@ -173,7 +173,7 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
       (value) => {
         if(value != "100g"){
           this.isPortionSelected = true;
-          this.calculateIngredientPortion();      
+          this.calculateIngredientPortion();    
         }else{
           this.isPortionSelected = false;   
         }
@@ -249,13 +249,15 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
   }
 
   onSubmit(){
-    if(this.ingredientForm.get('portion')?.value == "100g"){     
+    if(this.ingredientForm.get('portionType')?.value == "100g"){ 
+      this.ingredientForm.get('portionType')?.setValue("100g")    
       this.ingredient = this.ingredientForm.value;
-      this.ingredient.portionQuantity = "100g"
+      this.ingredient.portionQuantity = "100"
     }else{
+      
       this.ingredient = this.ingredientForm.value;
     }
-
+    console.log(this.ingredient);
     this.ingredient.tags = [];
     if(this.ingredientForm.get('tags')?.value != null){
       this.ingredientForm.get('tags')?.value.forEach((value: any)=>{

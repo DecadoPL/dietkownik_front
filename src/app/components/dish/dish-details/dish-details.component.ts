@@ -124,8 +124,9 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
                   this.ingredients.push(this.newIngredient(value));
                 }
               )
-          
-              this.calculateDishMacro();
+              
+              
+            
           
               this.dishForm.statusChanges.subscribe(
                 (status) =>{
@@ -139,11 +140,14 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
               )
           
               this.ingredients.controls.forEach((control ,index)=> {
+                this.updateIngredient(index,control.get('portionQuantity')?.value); 
                 control.get('portionQuantity')?.valueChanges.subscribe(value => {
                   this.updateIngredient(index, value);
                   this.calculateDishMacro();
                 });
               });
+
+              this.calculateDishMacro();
 
             /*  this.ingredients.controls.forEach((control ,index)=> {
                 control.get('portionType')?.valueChanges.subscribe(value => {
@@ -358,6 +362,11 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
           });
 
         });
+
+        const input = document.getElementById('ingredientSearchInput') as HTMLInputElement;
+        if (input) {
+          input.value = '';
+        }
     }
   }
 
@@ -369,11 +378,12 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
   }
 
   updateIngredient(index:number, portionQuantity: string){
-    this.ingredients.controls[index].patchValue({    
-      proteins: +this.ingredients.controls[index].get('proteins')?.value * +portionQuantity,
-      carbohydrates: +this.ingredients.controls[index].get('carbohydrates')?.value * +portionQuantity,
-      fat: +this.ingredients.controls[index].get('fat')?.value * +portionQuantity,
-      kcal: +this.ingredients.controls[index].get('kcal')?.value * +portionQuantity
+    const precision = 1;
+    this.ingredients.controls[index].patchValue({  
+      proteins: (+this.dish.ingredients[index].ingredient.macro.proteins * +portionQuantity).toFixed(precision).toString(),
+      carbohydrates: (+this.dish.ingredients[index].ingredient.macro.carbohydrates * +portionQuantity).toFixed(precision).toString(),
+      fat: (+this.dish.ingredients[index].ingredient.macro.fat * +portionQuantity).toFixed(precision).toString(),
+      kcal: (+this.dish.ingredients[index].ingredient.macro.kcal * +portionQuantity).toFixed(precision).toString(),
     });
   }
 }

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,8 @@ const now = new Date();
   styleUrls: ['./diet-details.component.css']
 })
 export class DietDetailsComponent implements OnInit, IDeactivateComponent{
+
+
 
   model!: NgbDateStruct;
   diet: Diet = new Diet();
@@ -89,7 +91,6 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
                 }
 
               }
-              console.log("this diet", this.diet)
               this.dietForm.patchValue({
                 name: this.diet.name,
                 description: this.diet.description,
@@ -141,39 +142,6 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
         this.requireSave = true;
       }
     )
-
-    this.dietForm.get('proteins')?.valueChanges.subscribe(
-      (value) => {
-        this.diet.requirements.macro.proteins = value;
-        this.calculateKcal();
-        this.updateDailyMacro();
-      }
-    );
-
-    this.dietForm.get('carbohydrates')?.valueChanges.subscribe(
-      (value) => {
-        this.diet.requirements.macro.carbohydrates = value;
-        this.calculateKcal();
-        this.updateDailyMacro();
-      }
-    );
-
-    this.dietForm.get('fat')?.valueChanges.subscribe(
-      (value) => {
-        this.diet.requirements.macro.fat = value;
-        this.calculateKcal();
-        this.updateDailyMacro();
-      }
-    );
-
-    this.dietForm.get('fibers')?.valueChanges.subscribe(
-      (value) => {
-        this.diet.requirements.macro.fibers = value;
-        this.updateDailyMacro();
-      }
-    );
-
-
 
   }
 
@@ -264,7 +232,8 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
   alertDiscard(){}
 
   calculateKcal(){
-    this.diet.requirements.macro.kcal = ((+this.diet.requirements.macro.proteins!*4)+(+this.diet.requirements.macro.carbohydrates!*4)+(+this.diet.requirements.macro.fat!*9)).toPrecision(3).toString();
+    const precision = 1;
+    this.diet.requirements.macro.kcal = ((+this.diet.requirements.macro.proteins!*4)+(+this.diet.requirements.macro.carbohydrates!*4)+(+this.diet.requirements.macro.fat!*9)).toFixed(precision).toString();
     this.dietForm.patchValue({
       kcal: this.diet.requirements.macro.kcal
     })
@@ -289,20 +258,34 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
   }
 
   addDish(dayNumber: number){
+
     if(this.newDish != undefined){
+      
+
       this.dishService.getDish(this.newDish.id).subscribe(
         (data) => {
           this.diet.days[dayNumber].dishes.push(new DietDish(0,"1","00:00",data.name,data.macro,data.micro,data.id,data.tags));
           this.updateDailyMacro();
           this.requireSave = true;
+
+
         }
       )
+
+      this.newDish = new Dish;
+
+      for(var i = 0; i< 7; i++){
+        const input = document.getElementById('dishSearchInput'+i) as HTMLInputElement;
+        if (input) {
+          input.value = '';
+        }
+      }
 
     }
   }
 
   updateDailyMacro(){
-    var precision: number = 3;
+    var precision: number = 1;
 
     this.clearDailyMacro();
 
@@ -312,17 +295,17 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
           value.dishes.forEach(
             (value) => {
               if(value.dishId != undefined){
-                this.inDay[index].macro.proteins = (+this.inDay[index].macro.proteins! + (+value.macro.proteins!)).toPrecision(precision).toString();
-                this.inDay[index].macro.carbohydrates = (+this.inDay[index].macro.carbohydrates! + (+value.macro.carbohydrates!)).toPrecision(precision).toString();
-                this.inDay[index].macro.fat = (+this.inDay[index].macro.fat! + (+value.macro.fat!)).toPrecision(precision).toString();
-                this.inDay[index].macro.kcal = (+this.inDay[index].macro.kcal! + (+value.macro.kcal!)).toPrecision(precision).toString();
+                this.inDay[index].macro.proteins = (+this.inDay[index].macro.proteins! + (+value.macro.proteins!)).toFixed(precision).toString();
+                this.inDay[index].macro.carbohydrates = (+this.inDay[index].macro.carbohydrates! + (+value.macro.carbohydrates!)).toFixed(precision).toString();
+                this.inDay[index].macro.fat = (+this.inDay[index].macro.fat! + (+value.macro.fat!)).toFixed(precision).toString();
+                this.inDay[index].macro.kcal = (+this.inDay[index].macro.kcal! + (+value.macro.kcal!)).toFixed(precision).toString();
               }
             }
           )    
-          this.difference[index].macro.proteins = (+this.diet.requirements.macro.proteins! - (+this.inDay[index].macro.proteins!)).toPrecision(precision).toString();
-          this.difference[index].macro.carbohydrates = (+this.diet.requirements.macro.carbohydrates! - (+this.inDay[index].macro.carbohydrates!)).toPrecision(precision).toString();
-          this.difference[index].macro.fat = (+this.diet.requirements.macro.fat! - (+this.inDay[index].macro.fat!)).toPrecision(precision).toString();
-          this.difference[index].macro.kcal = (+this.diet.requirements.macro.kcal! - (+this.inDay[index].macro.kcal!)).toPrecision(precision).toString();
+          this.difference[index].macro.proteins = (+this.diet.requirements.macro.proteins! - (+this.inDay[index].macro.proteins!)).toFixed(precision).toString();
+          this.difference[index].macro.carbohydrates = (+this.diet.requirements.macro.carbohydrates! - (+this.inDay[index].macro.carbohydrates!)).toFixed(precision).toString();
+          this.difference[index].macro.fat = (+this.diet.requirements.macro.fat! - (+this.inDay[index].macro.fat!)).toFixed(precision).toString();
+          this.difference[index].macro.kcal = (+this.diet.requirements.macro.kcal! - (+this.inDay[index].macro.kcal!)).toFixed(precision).toString();
         } 
       }
     )
@@ -352,7 +335,6 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
   }
 
   generateShoppingList(){
-    console.log("shopping list")
     this.shoppingListGenerated = true;
 
     this.dietService.getDietShoppingList(this.diet.id).subscribe(
@@ -360,24 +342,20 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
         this.shoppingList = data;
       }
     )
-    /*this.shoppingList = new Array();
-    this.diet.days.forEach(
-      (value) => {
-        value.dishes.forEach(
-          (value) => {
-            value.dish.ingredients.forEach(
-              (value) => {
-                var searchedShoppingListItem = this.shoppingList.find(x => x.ingrName == value.ingredient.name);
-                if(!searchedShoppingListItem){
-                  this.shoppingList.push(new ShoppingListItem(value.ingredient.name,value.portionQuantity,value.portionType));
-                }else{
-                  searchedShoppingListItem.amount = ((+searchedShoppingListItem.amount)+(+value.portionQuantity)).toPrecision(2).toString();
-                }
-              }
-            )
-          }
-        )
-      }
-    )*/
+    
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

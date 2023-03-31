@@ -242,7 +242,8 @@ export class DietRequirementsDetailsComponent implements OnInit {
   }
 
   calculateKcal(){
-    this.dietRequirements.macro.kcal = ((+this.dietRequirements.macro.proteins!*4)+(+this.dietRequirements.macro.carbohydrates!*4)+(+this.dietRequirements.macro.fat!*9)).toPrecision(3).toString();
+    const precision = 1;
+    this.dietRequirements.macro.kcal = ((+this.dietRequirements.macro.proteins!*4)+(+this.dietRequirements.macro.carbohydrates!*4)+(+this.dietRequirements.macro.fat!*9)).toFixed(precision).toString();
     this.dietRequirementsForm.patchValue({macro: { kcal: this.dietRequirements.macro.kcal}}, {emitEvent: false});
   }
 
