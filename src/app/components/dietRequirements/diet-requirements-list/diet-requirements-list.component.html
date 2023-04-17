@@ -4,7 +4,13 @@
   routerLink="/dietRequirements/new">Add new</button>
 
   <hr>
-  <table>
+  <div *ngIf="!$dietRequirementsList">
+    <span class="sr-only">Loading...</span> 
+    <br>
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <table *ngIf="$dietRequirementsList">
     <tr *ngFor="let dr of $dietRequirementsList">
       <th style="width:300px;"><app-diet-requirements-list-item
         [dietRequirements]="dr"

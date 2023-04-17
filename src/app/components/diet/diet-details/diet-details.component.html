@@ -1,138 +1,149 @@
-<app-alert [message]="alertMsg" *ngIf="alert" (cancel)="alertCancel()" (save)="alertSave()" (discard)="alertDiscard()"></app-alert>
-  
-<form [formGroup]="dietForm" (ngSubmit)="onSubmit()">
+  <app-alert [message]="alertMsg" *ngIf="alert" (cancel)="alertCancel()" (save)="alertSave()" (discard)="alertDiscard()"></app-alert>
 
-  <label for="requirements">Diet requirements</label>
-  <select  formControlName="requirements" class="form-control" style="width:300px;">
-    <option *ngFor="let requirement of allRequirements" [value]="requirement.name">
-      {{ requirement.name }}
-    </option>
-  </select>
+  <form [formGroup]="dietForm" (ngSubmit)="onSubmit()">
 
-<hr>
-
-  <div class="row">
-    <div class="col">
-      <div class="formGroup">
-        <label for="name">Diet name</label>
-        <input type="text" id="name" formControlName="name" class="form-control" style="width:300px;">
-        <span *ngIf="!dietForm.get('name')?.valid && dietForm.get('name')?.touched" class="text-danger">
-          Please enter a valid name
-        </span>
-      </div>
-    </div>
-    <div class="col">
-      <div class="formGroup">
-        <label for="description">Description</label>
-        <input type="text" id="description" formControlName="description" class="form-control" style="width:300px;">
-        <span *ngIf="!dietForm.get('description')?.valid && dietForm.get('description')?.touched" class="text-danger">
-          Please enter a valid description
-        </span>
-      </div>
-    </div>
-
-    
-  </div>
-
-  <button type="submit" class="btn btn-primary" [disabled]="!requireSave">Save</button>
-
-</form>
-
-<form class="row row-cols-sm-auto">
-	<div class="col-12">
-		<div class="input-group">
-			<input
-				class="form-control"
-				placeholder="yyyy-mm-dd"
-				name="dp"
-				[(ngModel)]="model"
-				ngbDatepicker
-				#d="ngbDatepicker"
-        (ngModelChange)="dateSelected()"
-			/>
-			<button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
-		</div>
-	</div>
-</form>
-<hr>
-
-<div class="row">
-  <div class="col" style="border-width: 1px; border-style: solid;" 
-  *ngFor="let day of diet.days; let dayId = index">
-
-  <table>
-    <tr>
-      {{day.day}}
-      <br>
-      {{day.date}}
-    </tr>
-    <tr>
-      <th></th>
-      <th>Prot</th>
-      <th>Carb</th>
-      <th>Fat</th>
-      <th>Kcal</th>
-    </tr>
-    <tr>
-      <td>Required:</td>
-      <td>{{this.diet.requirements.macro.proteins}}</td>
-      <td>{{this.diet.requirements.macro.carbohydrates}}</td>
-      <td>{{this.diet.requirements.macro.fat}}</td>
-      <td>{{this.diet.requirements.macro.kcal}}</td>
-    </tr>
-    <tr>
-      <td>In day:</td>
-      <td>{{this.inDay[dayId].macro.proteins}}</td>
-      <td>{{this.inDay[dayId].macro.carbohydrates}}</td>
-      <td>{{this.inDay[dayId].macro.fat}}</td>
-      <td>{{this.inDay[dayId].macro.kcal}}</td>
-    </tr>
-    <tr>
-      <td>Difference:</td>
-      <td>{{this.difference[dayId].macro.proteins}}</td>
-      <td>{{this.difference[dayId].macro.carbohydrates}}</td>
-      <td>{{this.difference[dayId].macro.fat}}</td>
-      <td>{{this.difference[dayId].macro.kcal}}</td>
-    </tr>
-    
-  
-  </table>
+    <label for="requirements">Diet requirements</label>
+    <select  formControlName="requirements" class="form-control" style="width:300px;">
+      <option *ngFor="let requirement of allRequirements" [value]="requirement.name">
+        {{ requirement.name }}
+      </option>
+    </select>
 
   <hr>
 
-      <app-diet-dish-card *ngFor="let dish of day.dishes; let dishIndex = index"
-      [dish] = "dish"
-      [dishId] = "dish.id"
-      [dayId] = "dayId"
-      [dishIndex] = "dishIndex"
-      (deleteCard) = "deleteDish($event)"
-    ></app-diet-dish-card>
+    <div class="row">
+      <div class="col">
+        <div class="formGroup">
+          <label for="name">Diet name</label>
+          <input type="text" id="name" formControlName="name" class="form-control" style="width:300px;">
+          <span *ngIf="!dietForm.get('name')?.valid && dietForm.get('name')?.touched" class="text-danger">
+            Please enter a valid name
+          </span>
+        </div>
+      </div>
+      <div class="col">
+        <div class="formGroup">
+          <label for="description">Description</label>
+          <input type="text" id="description" formControlName="description" class="form-control" style="width:300px;">
+          <span *ngIf="!dietForm.get('description')?.valid && dietForm.get('description')?.touched" class="text-danger">
+            Please enter a valid description
+          </span>
+        </div>
+      </div> 
+    </div>
 
-    <input
-    [id]="'dishSearchInput'+dayId"
-    type="text"
-    class="form-control"
-    [(ngModel)]="newDish"
-    [ngModelOptions]="{standalone: true}"
-    [ngbTypeahead]="search"
-    [inputFormatter]="formatter"
-    [resultFormatter]="formatter"
-    [editable]="false" 
-    (ngModelChange)="addDish(dayId)" 
-  />
+    <button type="submit" class="btn btn-primary" [disabled]="!requireSave">Save</button>
+
+  </form>
+
+  <form class="row row-cols-sm-auto">
+    <div class="col-12">
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="dp"
+          [(ngModel)]="model"
+          ngbDatepicker
+          #d="ngbDatepicker"
+          (ngModelChange)="dateSelected()"/>
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+      </div>
+    </div>
+  </form>
+  <hr>
+
+  <hr>
+
+  <div cdkDropListGroup>
+    <div class="row">
+      <div  *ngFor="let day of diet.days; let dayId = index" 
+      class="col" style="border-width: 1px; border-style: solid;">
+
+        <table>
+          <tr>
+            {{day.day}}
+            <br>
+            {{day.date}}
+          </tr>
+          <tr>
+            <th></th>
+            <th>Prot</th>
+            <th>Carb</th>
+            <th>Fat</th>
+            <th>Kcal</th>
+          </tr>
+          <tr>
+            <td>Required:</td>
+            <td>{{this.diet.requirements.macro.proteins}}</td>
+            <td>{{this.diet.requirements.macro.carbohydrates}}</td>
+            <td>{{this.diet.requirements.macro.fat}}</td>
+            <td>{{this.diet.requirements.macro.kcal}}</td>
+          </tr>
+          <tr>
+            <td>In day:</td>
+            <td>{{this.inDay[dayId].macro.proteins}}</td>
+            <td>{{this.inDay[dayId].macro.carbohydrates}}</td>
+            <td>{{this.inDay[dayId].macro.fat}}</td>
+            <td>{{this.inDay[dayId].macro.kcal}}</td>
+          </tr>
+          <tr>
+            <td>Difference:</td>
+            <td>{{this.difference[dayId].macro.proteins}}</td>
+            <td>{{this.difference[dayId].macro.carbohydrates}}</td>
+            <td>{{this.difference[dayId].macro.fat}}</td>
+            <td>{{this.difference[dayId].macro.kcal}}</td>
+          </tr>
+          
+        </table>
+      
+        <hr>
+
+        <div class="slots-column">
+          <div class="slot"
+          *ngFor="let hour of diet.requirements.hours; let dishIndex = index">
+
+          <div class="slot-dish"
+            cdkDropList
+            (cdkDropListDropped)="drop($event, day.dishes[dishIndex])"
+            [id]="dayId+'-'+dishIndex"
+          >
+            <div *ngIf="!day.dishes[dishIndex]">
+              <button [id]="'d'+dayId+'-'+dishIndex" type="button" class="btn btn-primary" 
+                (click)="showInputs[dayId + '-' + dishIndex] = true"
+                *ngIf="!showInputs[dayId + '-' + dishIndex]">
+                add dish at {{hour}}
+              </button>
+              <div *ngIf="showInputs[dayId + '-' + dishIndex]">
+                <app-diet-dishes-tray 
+                  (cancel)="showInputs[dayId + '-' + dishIndex] = false"
+                  (dishSelected)="addDish(dayId, dishIndex, $event); showInputs[dayId + '-' + dishIndex] = false"
+                  [unusedDishesPortions]="unusedDishesPortions"
+                  >
+
+                </app-diet-dishes-tray>
+              </div>
+
+            </div>
+            <div cdkDrag *ngIf="day.dishes[dishIndex]">
+              <app-diet-dish-card 
+                [dish] = "day.dishes[dishIndex]"
+                [dishId] = "day.dishes[dishIndex].id"
+                [dayId] = "dayId"
+                [dishIndex] = "dishIndex"
+                (deleteCard) = "deleteDish($event); showInputs[dayId + '-' + dishIndex] = false"
+              ></app-diet-dish-card>
+            </div>
+          </div>
+        </div>
+
+    
+      </div>
+    </div>
   </div>
-</div>
 
+  <button class="btn btn-primary" (click)="generateShoppingList()">Generate shopping list</button>
 
-<button class="btn btn-primary" (click)="generateShoppingList()">Generate shopping list</button>
-
-<table *ngIf="shoppingListGenerated">>
-  <tr *ngFor="let item of shoppingList">{{item.ingredientName}}, {{item.quantity}}, {{item.portionType}}</tr>
-</table>
-
-
-
-
-
-
-
+  <table *ngIf="shoppingListGenerated">>
+    <tr *ngFor="let item of shoppingList">{{item.ingredientName}}, {{item.quantity}}, {{item.portionType}}</tr>
+  </table>

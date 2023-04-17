@@ -9,7 +9,7 @@
 
       <hr>
 
-      Ingredient Id: {{this.ingredientForm.get('id')?.value}}
+      <!--Ingredient Id: {{this.ingredientForm.get('id')?.value}}-->
 
       <div class="formGroup">
         <label for="name">Ingredient name</label>
@@ -17,6 +17,55 @@
         <span *ngIf="!ingredientForm.get('name')?.valid && ingredientForm.get('name')?.touched" class="text-danger">
           Please enter a valid ingredient name
         </span>
+      </div>
+
+      
+
+      <div formGroupName="macro">
+        <div class="formGroup">
+          <label for="proteins">Proteins in 100g</label>
+          <input type="text" id="proteins" formControlName="proteins" class="form-control" style="width:300px;">
+          <span *ngIf="!ingredientForm.get('prot')?.valid && ingredientForm.get('proteins')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="carbohydrates">Carbohydrates in 100g</label>
+          <input type="text" id="carbohydrates" formControlName="carbohydrates" class="form-control" style="width:300px;">
+          <span *ngIf="!ingredientForm.get('carbohydrates')?.valid && ingredientForm.get('carbohydrates')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="fat">Fat in 100g</label>
+          <input type="text" id="fat" formControlName="fat" class="form-control" style="width:300px;">
+          <span *ngIf="!ingredientForm.get('fat')?.valid && ingredientForm.get('fat')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="fibers">Fiber in 100g</label>
+          <input type="text" id="fibers" formControlName="fibers" class="form-control" style="width:300px;">
+          <span *ngIf="!ingredientForm.get('fibers')?.valid && ingredientForm.get('fibers')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="cholesterol">Cholesterol in 100g</label>
+          <input type="text" id="cholesterol" formControlName="cholesterol" class="form-control" style="width:300px;">
+          <span *ngIf="!ingredientForm.get('cholesterol')?.valid && ingredientForm.get('cholesterol')?.touched" class="text-danger">
+            Please enter a valid number from range 0 - 1000
+          </span>
+        </div>
+
+        <div class="formGroup">
+          <label for="kcal">Kcal in 100g: </label>
+          {{this.ingredientForm.get('macro')?.get('kcal')?.value}}
+        </div>
       </div>
 
       <div class="formGroup">
@@ -76,54 +125,6 @@
           Please enter a valid ingredient description
         </span>
       </div>
-
-      <div formGroupName="macro">
-        <div class="formGroup">
-          <label for="proteins">Proteins in 100g</label>
-          <input type="text" id="proteins" formControlName="proteins" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('prot')?.valid && ingredientForm.get('proteins')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
-
-        <div class="formGroup">
-          <label for="carbohydrates">Carbohydrates in 100g</label>
-          <input type="text" id="carbohydrates" formControlName="carbohydrates" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('carbohydrates')?.valid && ingredientForm.get('carbohydrates')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
-
-        <div class="formGroup">
-          <label for="fat">Fat in 100g</label>
-          <input type="text" id="fat" formControlName="fat" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('fat')?.valid && ingredientForm.get('fat')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
-
-        <div class="formGroup">
-          <label for="fibers">Fiber in 100g</label>
-          <input type="text" id="fibers" formControlName="fibers" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('fibers')?.valid && ingredientForm.get('fibers')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
-
-        <div class="formGroup">
-          <label for="cholesterol">Cholesterol in 100g</label>
-          <input type="text" id="cholesterol" formControlName="cholesterol" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('cholesterol')?.valid && ingredientForm.get('cholesterol')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
-
-        <div class="formGroup">
-          <label for="kcal">Kcal in 100g: </label>
-          {{this.ingredientForm.get('macro')?.get('kcal')?.value}}
-        </div>
-      </div>
-
 
       <div formGroupName="micro">
 

@@ -3,13 +3,20 @@
   <button class="btn btn-primary" routerLink="/diets/new">Add new</button>
   <hr>
 
-  <table>
+  <div *ngIf="!diets">
+    <span class="sr-only">Loading...</span> 
+    <br>
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <table *ngIf="diets">
     <tr *ngFor="let diet of diets">
       <th style="width:300px;"> <app-diet-list-item
         [diet]="diet"
         [index]="diet.id"
         ></app-diet-list-item></th>
       <th><button (click)="deleteItem(diet.id)">delete</button></th>
+      <th><button (click)="copyItem(diet.id)">copy</button></th>
 
     </tr>
   </table>

@@ -26,6 +26,7 @@ export class DietRequirementsDetailsComponent implements OnInit {
   dietRequirementsForm!: FormGroup;
   allTags!: TagListItem[];
   allIngredients!: IngredientListItem[];
+  hours!: string[];
 
   constructor(private dietRequirementsService: DietRequirementsService,
               private fb: FormBuilder,
@@ -66,6 +67,7 @@ export class DietRequirementsDetailsComponent implements OnInit {
       prohibitedTags:[],
       requiredIngredients:[],
       prohibitedIngredients:[], 
+      hours: [],
     });
 
     this.tagsService.getTagsList().subscribe(
@@ -96,7 +98,8 @@ export class DietRequirementsDetailsComponent implements OnInit {
                 requiredTags: this.dietRequirements.requiredTags,
                 prohibitedTags: this.dietRequirements.prohibitedTags,
                 requiredIngredients: this.dietRequirements.requiredIngredients,
-                prohibitedIngredients: this.dietRequirements.prohibitedIngredients 
+                prohibitedIngredients: this.dietRequirements.prohibitedIngredients, 
+                hours: this.dietRequirements.hours
               });
               if( this.dietRequirements.requiredTags != null){
                 var tempArr: string[] = [];
@@ -134,6 +137,7 @@ export class DietRequirementsDetailsComponent implements OnInit {
 
                 this.dietRequirementsForm.get('prohibitedIngredients')?.setValue(tempArr);
               }
+                this.hours = this.dietRequirements.hours.slice();
               this.requireSave = false;
 
             }
@@ -172,6 +176,59 @@ export class DietRequirementsDetailsComponent implements OnInit {
   }
 
 
+  updateHour(event: any, index: number) {
+    const value = event.target.value;
+    if(value != ""){      
+      if (/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value)) {
+        this.hours[index] = value 
+      } else {
+        console.log("Input is invalid")
+      }
+    }else{
+      this.hours.splice(index,1);
+    }
+
+    this.requireSave = true;
+
+  }
+
+  newHour(event: any) {
+
+    var value = event.target.value;
+    if (/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value)) {
+      if (this.hours == undefined) {
+        this.hours = [];
+      }
+      if(value.length ==4) {
+        value = "0"+value;
+      }
+      const date = new Date(`2000-01-01T${value}:00`);
+      const firstDate = new Date(`2000-01-01T${this.hours[0]}:00`);
+      var index = 0;
+      if(date<firstDate){
+        index = 0;
+      }else{
+        index = this.hours.findIndex((time) => {
+          const timeDate = new Date(`2000-01-01T${time}:00`);
+          return timeDate > date;
+        });
+      }
+
+      if (index === -1) {
+        index = this.hours.length;
+      }
+
+      this.hours.splice(index, 0, value);
+
+      event.target.value = '';
+      this.requireSave = true;
+    } else {
+      
+    }
+
+  }
+
+
   canExit(): Promise<boolean> {
     if (this.requireSave == false) {
       return Promise.resolve(true);
@@ -181,7 +238,7 @@ export class DietRequirementsDetailsComponent implements OnInit {
       return new Promise<boolean>((resolve, reject) => {
         this.alertSave = () => {
           this.alert = false;
-          this.onSubmit();
+          this.onSubmit(event);
           resolve(true);
         };
         this.alertCancel = () => {
@@ -203,12 +260,15 @@ export class DietRequirementsDetailsComponent implements OnInit {
   alertDiscard(){}
 
 
-  onSubmit(){
-    this.dietRequirements = this.dietRequirementsForm.value;
+  onSubmit(event: any){
+    event.preventDefault();
+    this.dietRequirements = this.dietRequirementsForm.value
+    
     this.dietRequirements.requiredTags = [];
     this.dietRequirements.prohibitedTags = [];
     this.dietRequirements.requiredIngredients = [];
     this.dietRequirements.prohibitedIngredients = [];    
+    this.dietRequirements.hours = this.hours;
 
     if(this.dietRequirementsForm.get('requiredTags')?.value != null){
       this.dietRequirementsForm.get('requiredTags')?.value.forEach((value: any)=>{
@@ -230,6 +290,8 @@ export class DietRequirementsDetailsComponent implements OnInit {
         this.dietRequirements.prohibitedIngredients.push(this.allIngredients.find(t => t.name == value)!);
       })
     }
+
+    console.log(this.hours)
 
     if(this.dietRequirements.id != 0){
       this.dietRequirementsService.updateDietRequirements(this.dietRequirements).subscribe();

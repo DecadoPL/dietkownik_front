@@ -1,0 +1,36 @@
+<div class="backdrop"></div>
+<div class="tray">
+  <input
+    id = "searchInput"
+    type="text"
+    class="form-control"
+    [(ngModel)]="newDish"
+    [ngModelOptions]="{standalone: true}"
+    [ngbTypeahead]="search"
+    [inputFormatter]="formatter"
+    [resultFormatter]="formatter"
+    [editable]="false"
+    (ngModelChange)="addDish()"
+  />
+
+  <hr>
+  <div class="tray-content">
+    <div *ngFor="let dish of unusedDishesPortions; let dishIndex = index">
+      <app-diet-dishes-tray-card
+      [dish]="dish"
+      (addCard)="addDishFromUnused(dish, dishIndex)"
+      ></app-diet-dishes-tray-card>
+      <!--<app-diet-dish-card 
+      [dish] = "dish"
+      [dishId] = "0"
+      [dayId] = "0"
+      [dishIndex] = "0"
+      ></app-diet-dish-card>
+      <button (click)="addDishFromUnused(dish, dishIndex)">add to diet</button>-->
+    </div>
+  </div>
+
+  <div class="tray-actions">
+    <button class="btn btn-primary" (click)="onCancel()">Cancel</button>
+  </div>
+</div>

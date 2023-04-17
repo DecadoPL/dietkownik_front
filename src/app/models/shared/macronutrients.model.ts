@@ -5,6 +5,7 @@ export class Macronutrients{
   public fat: string;
   public fibers: string;
   public cholesterol: string;
+  
  
   constructor(
     kcal?: string,

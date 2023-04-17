@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild,} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,8 @@ import { DietService } from 'src/app/services/diet.service';
 import { DishService } from 'src/app/services/dish.service';
 import { DietRequirementsService } from 'src/app/services/dietRequirements.service';
 import { ShoppingListItem } from 'src/app/models/shoppingListItem.model';
+import { CdkDragDrop} from '@angular/cdk/drag-drop';
+import { cloneDeep } from 'lodash';
 
 const now = new Date();
 
@@ -25,15 +27,16 @@ const now = new Date();
   templateUrl: './diet-details.component.html',
   styleUrls: ['./diet-details.component.css']
 })
+
 export class DietDetailsComponent implements OnInit, IDeactivateComponent{
 
-
-
+  unusedDishesPortions: DietDish[] = new Array();
   model!: NgbDateStruct;
   diet: Diet = new Diet();
   newDish!: Dish;
   dietForm!: FormGroup;
   shoppingList: ShoppingListItem[] = new Array();
+  showInputs: { [key: string]: boolean } = {};
   isFormValid: boolean = false;
   requireSave: boolean = false;
   alertMsg!: string;
@@ -66,6 +69,7 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
               private fb:FormBuilder,
               private dietRequirementsService: DietRequirementsService){}
 
+  @ViewChild('dishInput') dishInput!: ElementRef;
 
   selectToday() {
     this.model = {year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate()};
@@ -84,20 +88,75 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
           this.dietService.getDiet(+params['dietId']).subscribe(
             (data) => {
               
-              this.diet = data;
+              this.diet = data;   
+              var hoursChangedFlag = false;
+
+              this.diet.days.forEach(
+                (day, dayIndex) => {
+                  var temp_dayDishesArr: DietDish[] = new Array();
+                  day.dishes.forEach(
+                    (dish) => {
+                      var dishTotalPortions = dish.quantity.split("/")[1]
+                      if(+dishTotalPortions > 1){
+
+                        //jeżeli dania nie ma na liście unused to dodaj
+                         if(this.unusedDishesPortions.findIndex((unusedDish) => unusedDish.name == dish.name) == -1){
+                            this.unusedDishesPortions.push(new DietDish(0, +dishTotalPortions-1+"/"+dishTotalPortions,"00:00",dish.name,dish.macro,dish.micro,dish.dishId,dish.tags));
+                          //jeżeli jest to zdejmij z listy unused
+                          }else{
+                            var unusedDishIndex = this.unusedDishesPortions.findIndex((unusedDish) => unusedDish.name == dish.name);
+                            var unusedDishQuantity = +this.unusedDishesPortions[unusedDishIndex].quantity.split("/")[0]
+                            this.unusedDishesPortions[unusedDishIndex].quantity = (unusedDishQuantity-1)+"/"+dishTotalPortions;
+                            if(unusedDishQuantity==1){
+                              this.unusedDishesPortions.splice(unusedDishIndex,1);
+                            }
+                          }
+                      }
+                      const hourIndex = this.diet.requirements.hours.findIndex((hour) => hour === dish.time)
+                      if(hourIndex != -1){// godzina znaleziona
+                        temp_dayDishesArr[hourIndex] = dish;
+                      }else{
+                        hoursChangedFlag = true;
+                        //jeżeli danie jest na liście unused
+                        var unusedDishIndex = this.unusedDishesPortions.findIndex((unusedDish) => unusedDish.name == dish.name);
+                        var unusedDishQuantity = +this.unusedDishesPortions[unusedDishIndex].quantity.split("/")[0]
+                        
+                        if(unusedDishIndex != -1){//danie znalezione
+                          this.unusedDishesPortions[unusedDishIndex].quantity = (unusedDishQuantity+1)+"/"+dishTotalPortions;
+                        }else{
+                          this.unusedDishesPortions.push(dish);
+                        }
+
+                      }
+                    }
+                  )             
+                  this.diet.days[dayIndex].dishes = temp_dayDishesArr;
+                }
+              )  
+
+              if(hoursChangedFlag){
+                confirm("Hours has changed")
+              }
+             
               if(this.diet.requirements==null){
                 if(confirm("Diet requirements has been deleted. Select new")) {
                   this.diet.requirements= new DietRequirements()
                 }
-
               }
+
               this.dietForm.patchValue({
                 name: this.diet.name,
                 description: this.diet.description,
                 requirements: this.diet.requirements.name
               })
               this.updateDailyMacro();
-              this.requireSave = false;
+              if(this.route.snapshot.routeConfig?.path?.includes("copy")){
+                this.requireSave = true;
+                this.diet.id = 0;
+              }else{
+                this.requireSave = false;
+              }
+              
             }
           );
 
@@ -123,12 +182,15 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
     this.dietRequirementsService.getDietRequirementsList().subscribe(
       (data) => {
         this.allRequirements = data;
+
         this.dietForm.get('requirements')?.valueChanges.subscribe(
           (value) => {
             this.diet.requirements.id = this.allRequirements.find(x=>x.name == value)!.id;
+            
             this.updateDailyMacro();
           }
         );
+
       }
     )
 
@@ -145,6 +207,31 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
 
   }
 
+
+  drop(event: CdkDragDrop<DietDish[]>, dish: DietDish) {
+    var currentDay = +event.container.id.split("-")[0];
+    var currentSlot = +event.container.id.split("-")[1];
+    var previousDay = +event.previousContainer.id.split("-")[0];
+    var previousSlot = +event.previousContainer.id.split("-")[1];
+
+    if (event.previousContainer != event.container) {
+      var currentSlotDish = this.diet.days[currentDay].dishes[currentSlot];
+      if(currentSlotDish === null ||  currentSlotDish === undefined){
+        this.diet.days[currentDay].dishes[currentSlot] = this.diet.days[previousDay].dishes[previousSlot]; 
+        this.diet.days[currentDay].dishes[currentSlot].time = this.diet.requirements.hours[currentSlot];
+        this.diet.days[previousDay].dishes = this.removeAndInsertEmpty(this.diet.days[previousDay].dishes,previousSlot)
+        this.updateDailyMacro();
+        this.requireSave = true;
+      }
+    }
+
+  }
+
+  removeAndInsertEmpty(arr: any[], index: number): any[] {
+    const newArr = arr.slice(); 
+    newArr.splice(index, 1, null);
+    return newArr;
+  }
 
   dateSelected() {
     const daysInMonth = new Date(this.model.year, this.model.month, 0).getDate();
@@ -243,45 +330,68 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
     this.diet.name = this.dietForm.get('name')?.value;
     this.diet.description = this.dietForm.get('description')?.value;
 
+    const copiedDiet = cloneDeep(this.diet);
+    
+    copiedDiet.days.forEach(
+      (day) => {
+        day.dishes.forEach(
+          () => {  
+            day.dishes = day.dishes.filter((elem) => elem !== null && elem !== undefined);       
+          }
+        )
+      }
+    )  
+  
     if(this.diet.id != 0){
-      this.dietService.updateDiet(this.diet).subscribe();
+      this.dietService.updateDiet(copiedDiet).subscribe();
     }else{
-      this.dietService.addDiet(this.diet).subscribe();
+      this.dietService.addDiet(copiedDiet).subscribe();
     } 
     this.requireSave = false;
   }
 
   deleteDish(data: [number, number]){
-    this.diet.days[data[1]].dishes.splice(data[0],1);
+    if(this.diet.days[data[1]].dishes[data[0]].quantity != "1/1"){
+      var tempDish = this.diet.days[data[1]].dishes[data[0]];
+      tempDish.time="00:00"
+      var dishTotalPortions = tempDish.quantity.split("/")[1];
+      tempDish.quantity = "1/"+dishTotalPortions
+      this.unusedDishesPortions.push(tempDish);
+    }
+    this.diet.days[data[1]].dishes = this.removeAndInsertEmpty(this.diet.days[data[1]].dishes, data[0])
     this.updateDailyMacro();
     this.requireSave = true;
   }
 
-  addDish(dayNumber: number){
-
-    if(this.newDish != undefined){
-      
-
-      this.dishService.getDish(this.newDish.id).subscribe(
-        (data) => {
-          this.diet.days[dayNumber].dishes.push(new DietDish(0,"1","00:00",data.name,data.macro,data.micro,data.id,data.tags));
-          this.updateDailyMacro();
-          this.requireSave = true;
+  addDish(dayNumber: number, dishIndex: number, dish: DietDish){
 
 
-        }
-      )
+    dish.time = this.diet.requirements.hours[dishIndex];
+    this.diet.days[dayNumber].dishes[dishIndex] = dish
+    this.updateDailyMacro();
+    this.requireSave = true;
 
-      this.newDish = new Dish;
-
-      for(var i = 0; i< 7; i++){
-        const input = document.getElementById('dishSearchInput'+i) as HTMLInputElement;
-        if (input) {
-          input.value = '';
-        }
+    var dishTotalPortions = dish.quantity.split("/")[1];
+    var dishCurrentPortion = 1;
+    this.diet.days.forEach(
+      (day)=>{
+        var tempDishes = day.dishes.filter(dayDish => {
+          if(dayDish && dayDish.dishId == dish.dishId){
+            return true;
+          }else{
+            return false;
+          }
+        })
+        tempDishes.forEach(
+          (dish) => {
+            dish.quantity = dishCurrentPortion+"/"+dishTotalPortions;
+            dishCurrentPortion++;
+            if(dishCurrentPortion > +dishTotalPortions) dishCurrentPortion = 1;
+          }
+        )
       }
+    )
 
-    }
   }
 
   updateDailyMacro(){
@@ -294,7 +404,7 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
         if(value.dishes != undefined){     
           value.dishes.forEach(
             (value) => {
-              if(value.dishId != undefined){
+              if(value != undefined || value != null ){
                 this.inDay[index].macro.proteins = (+this.inDay[index].macro.proteins! + (+value.macro.proteins!)).toFixed(precision).toString();
                 this.inDay[index].macro.carbohydrates = (+this.inDay[index].macro.carbohydrates! + (+value.macro.carbohydrates!)).toFixed(precision).toString();
                 this.inDay[index].macro.fat = (+this.inDay[index].macro.fat! + (+value.macro.fat!)).toFixed(precision).toString();
@@ -345,17 +455,3 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
     
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

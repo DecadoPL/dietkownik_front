@@ -3,9 +3,10 @@
   <app-alert [message]="alertMsg" *ngIf="alert" (cancel)="alertCancel()" (save)="alertSave()" (discard)="alertDiscard()"></app-alert>
   
   <div class="row">
-    <form [formGroup]="dietRequirementsForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="dietRequirementsForm" (ngSubmit)="onSubmit($event)" (keydown.enter)="$event.preventDefault()">
       
       <button type="submit" class="btn btn-primary" [disabled]="!requireSave">Save</button>
+ 
       <hr>
       Diet Requirements Id: {{this.dietRequirementsForm.get('id')?.value}}
 
@@ -51,6 +52,12 @@
             {{ ingr.name }}
           </option>
         </select>
+      </div>
+
+      <label>Hours</label>
+      <input type="text" (keydown.enter)="newHour($event)" class="form-control" style="width:300px;">
+      <div *ngFor="let hour of hours; let i = index">
+        <input type="text" [value]="hour" (keyup.enter)="updateHour($event, i)" class="form-control" style="width:300px;">
       </div>
 
       

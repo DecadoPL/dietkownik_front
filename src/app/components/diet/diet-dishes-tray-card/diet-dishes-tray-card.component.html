@@ -1,9 +1,9 @@
 <div class="container">
   
   <div class="name">{{dish.name}}</div>
-  <div class="time">{{dish.time}}</div>
-  <div class="quantity">Portions: {{dish.quantity}}</div>
-  <div class="button"><button class="btn btn-primary" (click)="deleteCard.emit([dishIndex, dayId])">X</button></div>
+  <div class="text">Portions left:</div>
+  <div class="quantity">{{portionsLeft}}</div>
+  <div class="button"><button class="btn btn-primary" (click)="addCard.emit(dish)">+</button></div>
   <div class="prot">P:<br>{{dish.macro.proteins}}</div>
   <div class="carb">C:<br>{{dish.macro.carbohydrates}}</div>
   <div class="fat">F:<br>{{dish.macro.fat}}</div>

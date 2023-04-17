@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, OperatorFunction, ReplaySubject, switchMap } from 'rxjs';
 import { Dish } from 'src/app/models/dish/dish.model';
 import { PortionType } from 'src/app/models/ingredient/portionType.model';
@@ -37,6 +37,7 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
   allTags!: TagListItem[];
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private dishService: DishService,
               private ingredientService: IngredientService,
               private portionTypeService: PortionTypeService,
@@ -116,18 +117,15 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
                 this.dishForm.get('tags')?.setValue(tempArr);
               }
 
-          
               this.image.nativeElement.src  = "data:image/gif;base64,"+this.dish.image;
 
               this.dish.ingredients.forEach(
                 (value, index) => {
                   this.ingredients.push(this.newIngredient(value));
+                  
                 }
               )
-              
-              
-            
-          
+
               this.dishForm.statusChanges.subscribe(
                 (status) =>{
                   if(status=="VALID"){
@@ -147,15 +145,10 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
                 });
               });
 
+
+
               this.calculateDishMacro();
 
-            /*  this.ingredients.controls.forEach((control ,index)=> {
-                control.get('portionType')?.valueChanges.subscribe(value => {
-                  this.updateIngredient(index, value);
-                  this.calculateDishMacro();
-                });
-              });
-            */
               this.requireSave = false;
             }
           );
@@ -174,8 +167,24 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
       }
     )
 
+    this.dishForm.get('portions')?.valueChanges.subscribe(
+      value =>{
+        this.calculateDishMacro();
+      }
+    )
+  }
 
+  changePortionType(index: number, name: any){
+    var selectEl = document.getElementById("portionType");
+    selectEl!.style.width = (+this.getTextWidth(name.value)+25) + "px";
+  }
 
+  getTextWidth(text: any) {
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    ctx!.font = getComputedStyle(document.body).getPropertyValue("font");
+    var metrics = ctx!.measureText(text);
+    return metrics.width;
   }
 
 	formatter = (ingr: IngredientListItem) => ingr.name;
@@ -198,13 +207,16 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
       }
     })
 
+    const portions = this.dishForm.get('portions')?.value
+    console.log("portions", portions)
+
     this.ingredients.controls.forEach((control)=> {
       this.dishForm.patchValue({
         macro:{
-          proteins: (+this.dishForm.get('macro')?.get('proteins')?.value + (+control.get('proteins')?.value)).toFixed(1).toString(),
-          carbohydrates: (+this.dishForm.get('macro')?.get('carbohydrates')?.value + (+control.get('carbohydrates')?.value)).toFixed(1).toString(),
-          fat: (+this.dishForm.get('macro')?.get('fat')?.value + (+control.get('fat')?.value)).toFixed(1).toString(),
-          kcal: (+this.dishForm.get('macro')?.get('kcal')?.value + (+control.get('kcal')?.value)).toFixed(1).toString(),
+          proteins: (+this.dishForm.get('macro')?.get('proteins')?.value + (+control.get('proteins')?.value)/portions).toFixed(1).toString(),
+          carbohydrates: (+this.dishForm.get('macro')?.get('carbohydrates')?.value + (+control.get('carbohydrates')?.value)/portions).toFixed(1).toString(),
+          fat: (+this.dishForm.get('macro')?.get('fat')?.value + (+control.get('fat')?.value)/portions).toFixed(1).toString(),
+          kcal: (+this.dishForm.get('macro')?.get('kcal')?.value + (+control.get('kcal')?.value)/portions).toFixed(1).toString(),
         }
       })
     });
@@ -319,6 +331,8 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
         this.dishService.addDish(dishDTO).subscribe();
       } 
       this.requireSave = false;
+
+      this.router.navigate(['dishes']);
     }
   }
 

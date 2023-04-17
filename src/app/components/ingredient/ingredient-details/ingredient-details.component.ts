@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable, ReplaySubject } from 'rxjs';
 import { Ingredient } from 'src/app/models/ingredient/ingredient.model';
 import { Macronutrients } from 'src/app/models/shared/macronutrients.model';
@@ -38,6 +38,7 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
   allTags!: TagListItem[];
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private ingredientService: IngredientService,
               private portionTypeService: PortionTypeService,
               private tagService: TagService,
@@ -273,6 +274,8 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
       this.ingredientService.updateIngredient(this.ingredient).subscribe();
     }
     this.requireSave = false;
+
+    this.router.navigate(['ingredients']);
   }
 
   calculateKcal(macro: Macronutrients){

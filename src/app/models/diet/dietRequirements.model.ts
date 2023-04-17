@@ -13,6 +13,7 @@ export class DietRequirements{
   public prohibitedTags: TagListItem[];
   public requiredIngredients: IngredientListItem[];
   public prohibitedIngredients: IngredientListItem[];
+  public hours: string[];
 
   constructor(
     id?: number,
@@ -24,6 +25,7 @@ export class DietRequirements{
     prohibitedTags?: TagListItem[],
     requiredIngredients?: IngredientListItem[],
     prohibitedIngredients?: IngredientListItem[],
+    hours?: string[]
   ){
     this.id = id ?? 0;
     this.name = name ?? "";
@@ -34,6 +36,7 @@ export class DietRequirements{
     this.prohibitedTags = prohibitedTags ?? [];
     this.requiredIngredients = requiredIngredients ?? [];
     this.prohibitedIngredients = prohibitedIngredients ?? [];
+    this.hours = hours ?? [];
   }
 }
 

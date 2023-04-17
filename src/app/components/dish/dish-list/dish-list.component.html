@@ -4,7 +4,13 @@
   routerLink="/dishes/new">Add new</button>
 
   <hr>
-  <table>
+  <div *ngIf="!dishes">
+    <span class="sr-only">Loading...</span> 
+    <br>
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <table *ngIf="dishes">
     <tr *ngFor="let dish of dishes">
       <th style="width:300px;"><app-dish-list-item
         [dish]="dish"

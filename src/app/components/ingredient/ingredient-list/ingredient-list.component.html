@@ -4,7 +4,13 @@
   routerLink="/ingredients/new">Add new</button>
 
   <hr>
-  <table>
+  <div *ngIf="!$ingredients">
+    <span class="sr-only">Loading...</span> 
+    <br>
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <table *ngIf="$ingredients">
     <tr *ngFor="let ingredient of $ingredients">
       <th style="width:300px;"><app-ingredient-list-item
         [ingredient]="ingredient"

@@ -21,6 +21,7 @@ export class DietDishDetailsComponent implements OnInit{
   ngOnInit(){
     this.route.params.subscribe(
       (params: Params) => {
+        console.log("diet dish details params", params)
         this.dietId = +params['dietId'];
         this.dayId = +params['dayId'];
         this.dishId = +params['dishId'];

@@ -3,8 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { DietDetailsComponent } from './components/diet/diet-details/diet-details.component';
 import { DietDishDetailsComponent } from './components/diet/diet-dish-details/diet-dish-details.component';
 import { DietListComponent } from './components/diet/diet-list/diet-list.component';
-import { DietRequirementsDetailsComponent } from './components/diet/diet-requirements-details/diet-requirements-details.component';
-import { DietRequirementsListComponent } from './components/diet/diet-requirements-list/diet-requirements-list.component';
+import { DietRequirementsDetailsComponent } from './components/dietRequirements/diet-requirements-details/diet-requirements-details.component';
+import { DietRequirementsListComponent } from './components/dietRequirements/diet-requirements-list/diet-requirements-list.component';
 import { DishDetailsComponent } from './components/dish/dish-details/dish-details.component';
 import { DishListComponent } from './components/dish/dish-list/dish-list.component';
 import { HomeComponent } from './components/home/home.component';
@@ -30,8 +30,10 @@ const routes: Routes = [
 
   { path: 'diets', component: DietListComponent},
   { path: 'diets/new', component: DietDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
+  { path: 'diets/copy/:dietId', component: DietDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
   { path: 'diets/:dietId', component: DietDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
   { path: 'diets/:dietId/:dayId/:dishId', component: DietDishDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
+ 
 
   { path: 'dietRequirements', component: DietRequirementsListComponent},
   { path: 'dietRequirements/new', component: DietRequirementsDetailsComponent, canDeactivate: [CanDeactivateGuardService]},

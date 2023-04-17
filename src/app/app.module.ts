@@ -23,16 +23,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from './services/user.service';
 import { AlertComponent } from './components/alert/alert.component';
 import { CanDeactivateGuardService } from './services/can-deactivate-guard.service';
-import { NgbAlertModule, NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlertModule, NgbCollapseModule, NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { PortionTypeService } from './services/portionType.service';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { TagService } from './services/tag.service';
 import { SharedManagementComponent } from './components/shared-management/shared-management.component';
-import { DietRequirementsListComponent } from './components/diet/diet-requirements-list/diet-requirements-list.component';
-import { DietRequirementsListItemComponent } from './components/diet/diet-requirements-list-item/diet-requirements-list-item.component';
+import { DietRequirementsListComponent } from './components/dietRequirements/diet-requirements-list/diet-requirements-list.component';
+import { DietRequirementsListItemComponent } from './components/dietRequirements/diet-requirements-list-item/diet-requirements-list-item.component';
 import { DietRequirementsService } from './services/dietRequirements.service';
-import { DietRequirementsDetailsComponent } from './components/diet/diet-requirements-details/diet-requirements-details.component';
+import { DietRequirementsDetailsComponent } from './components/dietRequirements/diet-requirements-details/diet-requirements-details.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DietDishesTrayComponent } from './components/diet/diet-dishes-tray/diet-dishes-tray.component';
+import { DietDishesTrayCardComponent } from './components/diet/diet-dishes-tray-card/diet-dishes-tray-card.component';
 
 
 
@@ -58,6 +61,8 @@ import { DietRequirementsDetailsComponent } from './components/diet/diet-require
     DietRequirementsDetailsComponent,
     DietRequirementsListComponent,
     DietRequirementsListItemComponent,
+    DietDishesTrayComponent,
+    DietDishesTrayCardComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,6 +70,7 @@ import { DietRequirementsDetailsComponent } from './components/diet/diet-require
     ReactiveFormsModule,
     FormsModule,
     NgbModule,
+    DragDropModule, 
     HttpClientModule,
     NgbDatepickerModule, 
     NgbAlertModule, 
@@ -79,7 +85,7 @@ import { DietRequirementsDetailsComponent } from './components/diet/diet-require
     PortionTypeService,
     TagService,
     DatePipe,
-    DietRequirementsService
+    DietRequirementsService,
   ],
   bootstrap: [
     AppComponent

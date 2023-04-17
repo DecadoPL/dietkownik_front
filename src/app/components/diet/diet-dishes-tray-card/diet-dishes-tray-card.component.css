@@ -32,7 +32,7 @@
   grid-area: 1 / 5 / 4 / 6;
 }
 
-.time {
+.text {
   /*background: red;*/
   grid-area: 2 / 1 / 3 / 3;
 }

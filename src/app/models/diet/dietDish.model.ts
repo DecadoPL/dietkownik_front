@@ -12,6 +12,7 @@ export class DietDish{
   public micro: Micronutrients;
   public dishId: number;
   public tags: TagListItem[];
+  //public portions: number;
   
   
 
@@ -23,7 +24,8 @@ export class DietDish{
     macro: Macronutrients,
     micro: Micronutrients,
     dishId: number,
-    tags: TagListItem[]  
+    tags: TagListItem[],
+    //portions: number,  
   ){
 
     this.id = id;
@@ -34,6 +36,7 @@ export class DietDish{
     this.micro = micro;
     this.dishId = dishId;
     this.tags = tags;
+    //this.portions = portions
 
   }
 }
