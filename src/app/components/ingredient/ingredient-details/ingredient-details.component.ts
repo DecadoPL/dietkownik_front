@@ -12,8 +12,6 @@ import { Micronutrients } from 'src/app/models/shared/micronutrients.model';
 import { TagListItem } from 'src/app/models/shared/tagListItem.model';
 import { IDeactivateComponent } from 'src/app/services/can-deactivate-guard.service';
 
-
-
 @Component({
   selector: 'app-ingredient-details',
   templateUrl: './ingredient-details.component.html',
@@ -145,6 +143,7 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
 
               this.image.nativeElement.src= "data:image/gif;base64,"+this.ingredient.image;       
               this.subscriptions();
+              this.calculateIngredientPortion();
             }
           )
           this.requireSave = false;

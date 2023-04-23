@@ -97,6 +97,8 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
             (data: Dish) => {
               this.dish = data;
 
+              console.log("this.dish.ingredients", this.dish.ingredients)
+
               this.dishForm.patchValue({
                 id: this.dish.id,
                 name: this.dish.name,
@@ -122,7 +124,6 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
               this.dish.ingredients.forEach(
                 (value, index) => {
                   this.ingredients.push(this.newIngredient(value));
-                  
                 }
               )
 
@@ -144,8 +145,6 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
                   this.calculateDishMacro();
                 });
               });
-
-
 
               this.calculateDishMacro();
 

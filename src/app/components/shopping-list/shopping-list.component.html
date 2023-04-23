@@ -1,0 +1,34 @@
+
+<form [formGroup]="shoppingListForm">
+  <div class="formGroup">
+    <label for="diets">Diets</label>
+    <select formControlName="diets" multiple class="form-control" style="width:300px;" #dietList>
+      <option *ngFor="let dietListItem of Diets" [value]="dietListItem.id">
+        {{ dietListItem.name }}
+      </option>
+    </select>
+  </div>
+</form>
+
+<button class="btn btn-primary" (click)="generateShoppingList()">Generate shopping list</button>
+
+
+  <div class="grid-container" *ngFor="let item of unchecked; let itemId = index">
+    <div class="grid-item">{{item.name}}</div>
+    <input type="text" [value]="item.quantity" (keydown.enter)="uncheckedUpdate($event, itemId)">
+    <div class="grid-item">{{item.portionType}}</div>
+    <div class="grid-item"><button class="btn btn-primary" (click)="checkItem(item)">X</button></div>
+  </div>
+  <hr>
+  <div class="grid-container" *ngFor="let item of checked">
+    <div class="grid-item">{{item.name}}</div>
+    <div class="grid-item">{{item.quantity}}</div>
+    <div class="grid-item">{{item.portionType}}</div>
+    <div class="grid-item"><button class="btn btn-primary" (click)="uncheckItem(item)">X</button></div>
+  </div>
+
+<label>Aditional items</label>
+<input type="text" (keydown.enter)="newItem($event)" class="form-control" style="width:300px;">
+
+
+

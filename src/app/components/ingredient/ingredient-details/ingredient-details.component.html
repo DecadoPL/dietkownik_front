@@ -9,8 +9,6 @@
 
       <hr>
 
-      <!--Ingredient Id: {{this.ingredientForm.get('id')?.value}}-->
-
       <div class="formGroup">
         <label for="name">Ingredient name</label>
         <input type="text" id="name" formControlName="name" class="form-control" style="width:300px;">
@@ -18,8 +16,6 @@
           Please enter a valid ingredient name
         </span>
       </div>
-
-      
 
       <div formGroupName="macro">
         <div class="formGroup">
@@ -87,7 +83,7 @@
         </select>
       </div>
 
-      <div class="formGroup" *ngIf="isPortionSelected">
+      <div class="formGroup">
         <label for="portionQuantity">Portion Quantity</label>
         <input type="text" id="portionQuantity" formControlName="portionQuantity" class="form-control" style="width:300px;">
         <span *ngIf="!ingredientForm.get('portionQuantity')?.valid && ingredientForm.get('portionQuantity')?.touched" class="text-danger">
@@ -210,7 +206,7 @@
 
       </div>
       
-      <a *ngIf="isPortionSelected">
+      
         <p>Macro & micro in portion</p>
         <ul >
           <li>Macro:</li>
@@ -232,7 +228,7 @@
           <li> Calcium: {{portionMicro.calcium}}</li>
           <li> Iron: {{portionMicro.iron}}</li>          
         </ul>
-      </a>    
+      
 
 
 

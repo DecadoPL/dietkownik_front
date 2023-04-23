@@ -351,26 +351,39 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
   }
 
   deleteDish(data: [number, number]){
+
+    var tempDish = this.diet.days[data[1]].dishes[data[0]];
     if(this.diet.days[data[1]].dishes[data[0]].quantity != "1/1"){
-      var tempDish = this.diet.days[data[1]].dishes[data[0]];
+     
       tempDish.time="00:00"
       var dishTotalPortions = tempDish.quantity.split("/")[1];
       tempDish.quantity = "1/"+dishTotalPortions
-      this.unusedDishesPortions.push(tempDish);
+
+      let unusedDishIndex = this.unusedDishesPortions.findIndex(x=>x.name == tempDish.name)
+
+      if(unusedDishIndex != -1){//znaleziono
+        var portions = this.unusedDishesPortions[unusedDishIndex].quantity.split("/")[0];
+        this.unusedDishesPortions[unusedDishIndex].quantity = +portions+1+"/"+dishTotalPortions;
+      }else{
+        this.unusedDishesPortions.push(tempDish);
+      }
+         
     }
     this.diet.days[data[1]].dishes = this.removeAndInsertEmpty(this.diet.days[data[1]].dishes, data[0])
+    this.renumberPortions(tempDish);
     this.updateDailyMacro();
     this.requireSave = true;
   }
 
   addDish(dayNumber: number, dishIndex: number, dish: DietDish){
-
-
     dish.time = this.diet.requirements.hours[dishIndex];
     this.diet.days[dayNumber].dishes[dishIndex] = dish
     this.updateDailyMacro();
     this.requireSave = true;
+    this.renumberPortions(dish);
+  }
 
+  renumberPortions(dish: DietDish){
     var dishTotalPortions = dish.quantity.split("/")[1];
     var dishCurrentPortion = 1;
     this.diet.days.forEach(
@@ -391,7 +404,6 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
         )
       }
     )
-
   }
 
   updateDailyMacro(){
@@ -444,14 +456,5 @@ export class DietDetailsComponent implements OnInit, IDeactivateComponent{
     )
   }
 
-  generateShoppingList(){
-    this.shoppingListGenerated = true;
 
-    this.dietService.getDietShoppingList(this.diet.id).subscribe(
-      (data) => {
-        this.shoppingList = data;
-      }
-    )
-    
-  }
 }

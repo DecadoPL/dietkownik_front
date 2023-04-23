@@ -1,6 +1,7 @@
+
 <div class="container">
   
-  <div class="name">{{dish.name}}</div>
+  <div class="name" style="cursor: pointer;" [routerLink]="[dayId,dish.dishId]">{{dish.name}}</div>
   <div class="time">{{dish.time}}</div>
   <div class="quantity">Portions: {{dish.quantity}}</div>
   <div class="button"><button class="btn btn-primary" (click)="deleteCard.emit([dishIndex, dayId])">X</button></div>

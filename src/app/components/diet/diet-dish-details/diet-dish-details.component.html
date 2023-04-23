@@ -1,3 +1,42 @@
-<p>diet-dish-details works!</p>
-<p>id {{dish.id}}</p>
-<p>name {{dish.name}}</p>
+<p></p>
+<p></p>
+<div class="container" *ngIf="dish">
+  <p>id {{dish.id}}</p>
+  <p>name {{dish.name}}</p>
+  <p>IMAGE</p>
+  <p>Portions {{dish.portions}}</p>
+  <p>Description {{dish.description}}</p>
+  <p>Recipe {{dish.recipe}}</p>
+  <p>Cooking Time{{dish.cookingTime}}</p>
+  <hr>
+  <p>Ingredients:</p>
+  <div *ngFor="let ingr of dish.ingredients">
+    <p>{{ingr.ingredient.name}}</p>
+  </div>
+  <hr>
+  <p>Macro:</p>
+  <p> Proteins: {{dish.macro.proteins}}</p>
+  <p> Carbohydrates: {{dish.macro.carbohydrates}}</p>
+  <p> Fat: {{dish.macro.fat}}</p>
+  <p> Fibers: {{dish.macro.fibers}}</p>
+  <p> Kcal: {{dish.macro.kcal}}</p>
+  <p> Cholesterol: {{dish.macro.cholesterol}}</p>
+  <hr>
+  <p>Micro:</p>
+  <p> Potassium: {{dish.micro.potassium}}</p>
+  <p> Sodium: {{dish.micro.sodium}}</p>
+  <p> VitaminA: {{dish.micro.vitaminA}}</p>
+  <p> VitaminC: {{dish.micro.vitaminC}}</p>
+  <p> VitaminB6: {{dish.micro.vitaminB6}}</p>
+  <p> Magnesium: {{dish.micro.magnesium}}</p>
+  <p> VitaminD: {{dish.micro.vitaminD}}</p>
+  <p> VitaminB12: {{dish.micro.vitaminB12}}</p>
+  <p> Calcium: {{dish.micro.calcium}}</p>
+  <p> Iron: {{dish.micro.iron}}</p>  
+
+  <hr>
+  <p>Tags:</p>
+  <div *ngFor="let tag of dish.tags">
+    <p>{{tag.name}}</p>
+  </div>
+</div>

@@ -142,8 +142,4 @@
     </div>
   </div>
 
-  <button class="btn btn-primary" (click)="generateShoppingList()">Generate shopping list</button>
 
-  <table *ngIf="shoppingListGenerated">>
-    <tr *ngFor="let item of shoppingList">{{item.ingredientName}}, {{item.quantity}}, {{item.portionType}}</tr>
-  </table>

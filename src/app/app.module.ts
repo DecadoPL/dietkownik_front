@@ -36,6 +36,8 @@ import { DietRequirementsDetailsComponent } from './components/dietRequirements/
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DietDishesTrayComponent } from './components/diet/diet-dishes-tray/diet-dishes-tray.component';
 import { DietDishesTrayCardComponent } from './components/diet/diet-dishes-tray-card/diet-dishes-tray-card.component';
+import { ShoppingListComponent } from './components/shopping-list/shopping-list.component';
+import { ShoppingListService } from './services/shoppingList.service';
 
 
 
@@ -63,6 +65,7 @@ import { DietDishesTrayCardComponent } from './components/diet/diet-dishes-tray-
     DietRequirementsListItemComponent,
     DietDishesTrayComponent,
     DietDishesTrayCardComponent,
+    ShoppingListComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,6 +89,7 @@ import { DietDishesTrayCardComponent } from './components/diet/diet-dishes-tray-
     TagService,
     DatePipe,
     DietRequirementsService,
+    ShoppingListService,
   ],
   bootstrap: [
     AppComponent

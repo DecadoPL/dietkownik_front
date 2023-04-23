@@ -13,6 +13,7 @@ import { IngredientListComponent } from './components/ingredient/ingredient-list
 import { SharedManagementComponent } from './components/shared-management/shared-management.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { CanDeactivateGuardService } from './services/can-deactivate-guard.service';
+import { ShoppingListComponent } from './components/shopping-list/shopping-list.component';
 
 
 const routes: Routes = [
@@ -33,8 +34,9 @@ const routes: Routes = [
   { path: 'diets/copy/:dietId', component: DietDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
   { path: 'diets/:dietId', component: DietDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
   { path: 'diets/:dietId/:dayId/:dishId', component: DietDishDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
- 
 
+  { path: 'shoppingList', component: ShoppingListComponent},
+ 
   { path: 'dietRequirements', component: DietRequirementsListComponent},
   { path: 'dietRequirements/new', component: DietRequirementsDetailsComponent, canDeactivate: [CanDeactivateGuardService]},
   { path: 'dietRequirements/:id', component: DietRequirementsDetailsComponent, canDeactivate: [CanDeactivateGuardService]},

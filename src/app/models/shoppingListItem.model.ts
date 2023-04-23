@@ -1,15 +1,18 @@
 export class ShoppingListItem{
-  public ingredientName: string;
+  public name: string;
   public quantity: string;
   public portionType: string;
+  public checked: boolean;
 
   constructor(
-    ingredientName: string,
+    name: string,
     quantity: string,
-    portionType: string
+    portionType: string,
+    checked: boolean,
   ){
-    this.ingredientName = ingredientName;
+    this.name = name;
     this.quantity = quantity;
-    this.portionType = portionType
+    this.portionType = portionType;
+    this.checked = checked;
   }
 }
