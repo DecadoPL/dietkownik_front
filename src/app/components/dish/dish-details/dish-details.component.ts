@@ -88,7 +88,6 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
             (data: Dish) => {
               this.dish = data;
 
-              console.log("this.dish", this.dish)
               this.dishForm.patchValue({
                 id: this.dish.id,
                 name: this.dish.name,
@@ -223,7 +222,6 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
     const portions = this.dishForm.get('portions')?.value
 
     this.ingredients.controls.forEach((control)=> {
-      console.log(control.value)
       this.dishForm.patchValue({
         macro:{
           proteins: (+this.dishForm.get('macro')?.get('proteins')?.value + (+control.get('proteins')?.value)/portions).toFixed(1).toString(),
@@ -426,10 +424,10 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
     }
 
     this.ingredients.controls[index].patchValue({  
-      proteins: (+this.dish.ingredients[index].ingredient.macro.proteins *portionQuantityNumber* +ingrQuantity).toFixed(precision).toString(),
-      carbohydrates: (+this.dish.ingredients[index].ingredient.macro.carbohydrates * +ingrQuantity).toFixed(precision).toString(),
-      fat: (+this.dish.ingredients[index].ingredient.macro.fat * +ingrQuantity).toFixed(precision).toString(),
-      kcal: (+this.dish.ingredients[index].ingredient.macro.kcal * +ingrQuantity).toFixed(precision).toString(),
+      proteins: (+this.dish.ingredients[index].ingredient.macro.proteins * portionQuantityNumber * +ingrQuantity).toFixed(precision).toString(),
+      carbohydrates: (+this.dish.ingredients[index].ingredient.macro.carbohydrates * portionQuantityNumber * +ingrQuantity).toFixed(precision).toString(),
+      fat: (+this.dish.ingredients[index].ingredient.macro.fat * portionQuantityNumber * +ingrQuantity).toFixed(precision).toString(),
+      kcal: (+this.dish.ingredients[index].ingredient.macro.kcal * portionQuantityNumber * +ingrQuantity).toFixed(precision).toString(),
     });
   }
 }

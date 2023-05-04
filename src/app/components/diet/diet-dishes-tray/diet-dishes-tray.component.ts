@@ -71,7 +71,6 @@ export class DietDishesTrayComponent implements OnInit, OnDestroy{
   }
 
   addDishFromUnused(dish: DietDish, index: number){
-    console.log("unusedDish", dish)
     var unusedDishIndex = this.unusedDishesPortions.findIndex((unusedDish) => unusedDish.name == dish.name);
     var dishTotalPortions = +this.unusedDishesPortions[unusedDishIndex].quantity.split("/")[1]
     var unusedDishQuantity = +this.unusedDishesPortions[unusedDishIndex].quantity.split("/")[0]

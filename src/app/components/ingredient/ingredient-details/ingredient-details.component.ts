@@ -151,10 +151,8 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
 
               this.portions.controls.forEach((control ,index)=> {
                 control.get('quantity')?.valueChanges.subscribe(value => {
-                  console.log("quantity", value);
                   if(value==""){
                     this.portions.removeAt(index, {emitEvent: false})
-                    console.log(this.portions);
                   }
                 });
               });
@@ -191,15 +189,12 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
 
   newPortionEnter(){
     let newPortion = this.ingredientForm.get('newPortion')?.value;
-    console.log(newPortion)
     this.portions.push(this.newPortion(new Portion(0,newPortion.name, newPortion.quantity)));
 
     this.portions.controls.forEach((control ,index)=> {
       control.get('quantity')?.valueChanges.subscribe(value => {
-        console.log("quantity", value);
         if(value==""){
           this.portions.removeAt(index, {emitEvent: false})
-          console.log(this.portions);
         }
       });
     });
@@ -284,7 +279,7 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
 
   onSubmit(){
 
-    console.log(this.ingredient);
+    this.ingredient = this.ingredientForm.value;
 
     this.ingredient.portions = [];
     if(this.ingredientForm.get('portions')?.value != null){
@@ -301,8 +296,6 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
   
     this.ingredient.image = this.image64base;
     this.ingredient.macro.kcal = this.calculateKcal(this.ingredient.macro)
-
-    console.log(this.ingredient)
 
     if(this.ingredient.id==0){
       this.ingredientService.addIngredient(this.ingredient).subscribe();

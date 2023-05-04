@@ -291,8 +291,6 @@ export class DietRequirementsDetailsComponent implements OnInit {
       })
     }
 
-    console.log(this.hours)
-
     if(this.dietRequirements.id != 0){
       this.dietRequirementsService.updateDietRequirements(this.dietRequirements).subscribe();
     }else{

@@ -64,6 +64,7 @@
             </span>
           </div>
 
+    
           <br>
           <p>Macro in portion</p>
           <div class="macro-container">
@@ -90,7 +91,7 @@
           </div>
           <br>
         </div>
-
+  
         <input
           id="ingredientSearchInput"
           type="text"
@@ -103,7 +104,7 @@
           [editable]="false" 
           (ngModelChange)="addIngredient()" 
         />
-        <hr>
+        <hr>      
 
 
         <div class="ingr-container" *ngFor="let ingredient of ingredients.controls; let i=index" formArrayName="ingredients">
@@ -140,7 +141,6 @@
           </ng-container>
           <br>
         </div>
-
 
 
 

@@ -52,6 +52,7 @@ export class ShoppingListDetailsComponent implements OnInit {
           this.shoppingListService.getShoppingList(params['id']).subscribe(
             (data) => {
               this.shoppingList = data;
+
               if(data.items != null) {
                 data.items.forEach((item) => {
                   if(item.checked){
@@ -66,10 +67,6 @@ export class ShoppingListDetailsComponent implements OnInit {
                 name: this.shoppingList.name
               })
 
-
-      
-              console.log("getshoppingList this.checked", this.checked)
-              console.log("getshoppingList this.unchecked", this.unchecked)
             }
           )
 
@@ -91,8 +88,6 @@ export class ShoppingListDetailsComponent implements OnInit {
     )
   }
 
-
-
   generateShoppingList(){
     this.ShoppingListGenerated = true;
     const selectedDiets = this.shoppingListForm.get('diets')?.value
@@ -102,7 +97,6 @@ export class ShoppingListDetailsComponent implements OnInit {
         data.forEach((item, index) => {
           this.unchecked[index] = item;
         })
-        console.log("this.shoppingList", this.shoppingList)
         this.shoppingList.items = this.unchecked.concat(this.checked);
         this.shoppingListService.saveShoppingList(this.shoppingList).subscribe();
       }
@@ -114,9 +108,6 @@ export class ShoppingListDetailsComponent implements OnInit {
     this.checked.push(item);
     const itemIndex = this.unchecked.findIndex(x => x.name == item.name)
     this.unchecked.splice(itemIndex,1)
-
-    console.log(this.checked)
-    
 
     this.shoppingList.items = this.unchecked.concat(this.checked);
     this.shoppingListService.saveShoppingList(this.shoppingList).subscribe();
@@ -171,10 +162,6 @@ export class ShoppingListDetailsComponent implements OnInit {
                 }
               })
             }
-
-    
-            console.log("getshoppingList this.checked", this.checked)
-            console.log("getshoppingList this.unchecked", this.unchecked)
           }
         )
       }

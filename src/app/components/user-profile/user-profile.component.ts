@@ -49,7 +49,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSubmit(){
-    console.log(this.userProfileForm);
+
   }
 
 }
