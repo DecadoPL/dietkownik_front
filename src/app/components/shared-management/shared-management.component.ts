@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PortionType } from 'src/app/models/ingredient/portionType.model';
+import { PortionName } from 'src/app/models/ingredient/PortionName.model';
 import { TagListItem } from 'src/app/models/shared/tagListItem.model';
-import { PortionTypeService } from 'src/app/services/portionType.service';
+import { PortionNameService } from 'src/app/services/PortionName.service';
 import { TagService } from 'src/app/services/tag.service';
 
 @Component({
@@ -11,17 +11,17 @@ import { TagService } from 'src/app/services/tag.service';
 })
 export class SharedManagementComponent implements OnInit{
 
-  allPortionTypes!: PortionType[];
+  allPortionNames!: PortionName[];
   allTags!: TagListItem[];
   
 
-  constructor(private portionTypeService: PortionTypeService,
+  constructor(private PortionNameService: PortionNameService,
               private tagService: TagService){}
 
   ngOnInit(){
-    this.portionTypeService.getPortionTypes().subscribe(
+    this.PortionNameService.getPortionNames().subscribe(
       (data) => {
-        this.allPortionTypes = data;
+        this.allPortionNames = data;
       }
     )
 
@@ -32,24 +32,24 @@ export class SharedManagementComponent implements OnInit{
     )
   }
 
-  updatePortionType(event: any, pt: any) {
+  updatePortionName(event: any, pt: any) {
     const value = event.target.value;
     if(value != ""){      
-      this.portionTypeService.updatePortionType(new PortionType(pt.id,value)).subscribe(
+      this.PortionNameService.updatePortionName(new PortionName(pt.id,value)).subscribe(
         (data) => {
-          this.portionTypeService.getPortionTypes().subscribe(
+          this.PortionNameService.getPortionNames().subscribe(
             (data) => {
-              this.allPortionTypes = data;
+              this.allPortionNames = data;
             }
           )
         }
       )
     }else{
-      this.portionTypeService.deletePortionType(new PortionType(pt.id,value)).subscribe(
+      this.PortionNameService.deletePortionName(new PortionName(pt.id,value)).subscribe(
         (data) => {
-          this.portionTypeService.getPortionTypes().subscribe(
+          this.PortionNameService.getPortionNames().subscribe(
             (data) => {
-              this.allPortionTypes = data;
+              this.allPortionNames = data;
             }
           )
         }
@@ -57,21 +57,21 @@ export class SharedManagementComponent implements OnInit{
     }
   }
 
-  newPortionType(event: any) {
+  newPortionName(event: any) {
 
     var value = event.target.value;
     
-    this.portionTypeService.addPortionType(new PortionType(0,value)).subscribe(
+    this.PortionNameService.addPortionName(new PortionName(0,value)).subscribe(
       (data) => {
-        this.portionTypeService.getPortionTypes().subscribe(
+        this.PortionNameService.getPortionNames().subscribe(
           (data) => {
-            this.allPortionTypes = data;
+            this.allPortionNames = data;
           }
         )
       }
     )
 
-    value.value = "";
+    event.target.value = "";
 
   }
 
@@ -114,7 +114,7 @@ export class SharedManagementComponent implements OnInit{
       }
     )
 
-    value.value = "";
+    event.target.value = "";
 
   }
 

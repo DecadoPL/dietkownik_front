@@ -25,7 +25,7 @@ import { AlertComponent } from './components/alert/alert.component';
 import { CanDeactivateGuardService } from './services/can-deactivate-guard.service';
 import { NgbAlertModule, NgbCollapseModule, NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { PortionTypeService } from './services/portionType.service';
+import { PortionNameService } from './services/PortionName.service';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { TagService } from './services/tag.service';
 import { SharedManagementComponent } from './components/shared-management/shared-management.component';
@@ -36,8 +36,10 @@ import { DietRequirementsDetailsComponent } from './components/dietRequirements/
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DietDishesTrayComponent } from './components/diet/diet-dishes-tray/diet-dishes-tray.component';
 import { DietDishesTrayCardComponent } from './components/diet/diet-dishes-tray-card/diet-dishes-tray-card.component';
-import { ShoppingListComponent } from './components/shopping-list/shopping-list.component';
 import { ShoppingListService } from './services/shoppingList.service';
+import { ShoppingListDetailsComponent } from './components/shopping-list/shopping-list-details/shopping-list-details.component';
+import { ShoppingListListComponent } from './components/shopping-list/shopping-list-list/shopping-list-list.component';
+import { ShoppingListListItemComponent } from './components/shopping-list/shopping-list-list-item/shopping-list-list-item.component';
 
 
 
@@ -65,7 +67,9 @@ import { ShoppingListService } from './services/shoppingList.service';
     DietRequirementsListItemComponent,
     DietDishesTrayComponent,
     DietDishesTrayCardComponent,
-    ShoppingListComponent,
+    ShoppingListDetailsComponent,
+    ShoppingListListComponent,
+    ShoppingListListItemComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,7 +89,7 @@ import { ShoppingListService } from './services/shoppingList.service';
     DietService, 
     UserService, 
     CanDeactivateGuardService,
-    PortionTypeService,
+    PortionNameService,
     TagService,
     DatePipe,
     DietRequirementsService,

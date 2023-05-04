@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { environment } from "src/environments/environment";
 import { Diet } from "../models/diet/diet.model";
 import { DietListItem } from "../models/diet/dietListItem.model";
-import { ShoppingListItem } from "../models/shoppingListItem.model";
+import { ShoppingListItem } from "../models/shoppingList/shoppingListItem.model";
 
 @Injectable()
 export class DietService{

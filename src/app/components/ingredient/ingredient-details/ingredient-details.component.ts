@@ -4,13 +4,14 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable, ReplaySubject } from 'rxjs';
 import { Ingredient } from 'src/app/models/ingredient/ingredient.model';
 import { Macronutrients } from 'src/app/models/shared/macronutrients.model';
-import { PortionType } from 'src/app/models/ingredient/portionType.model';
+import { PortionName } from 'src/app/models/ingredient/PortionName.model';
 import { TagService } from 'src/app/services/tag.service';
 import { IngredientService } from 'src/app/services/ingredient.service';
-import { PortionTypeService } from 'src/app/services/portionType.service';
+import { PortionNameService } from 'src/app/services/PortionName.service';
 import { Micronutrients } from 'src/app/models/shared/micronutrients.model';
 import { TagListItem } from 'src/app/models/shared/tagListItem.model';
 import { IDeactivateComponent } from 'src/app/services/can-deactivate-guard.service';
+import { Portion } from 'src/app/models/ingredient/portion.model';
 
 @Component({
   selector: 'app-ingredient-details',
@@ -30,7 +31,7 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
   alertMsg!: string;
   alert: boolean = false;
   isPortionSelected!: boolean;
-  portionTypes!: PortionType[];
+  PortionNames!: PortionName[];
   image64base!: string;
   ingrTags!: TagListItem[];
   allTags!: TagListItem[];
@@ -38,7 +39,7 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
   constructor(private route: ActivatedRoute,
               private router: Router,
               private ingredientService: IngredientService,
-              private portionTypeService: PortionTypeService,
+              private PortionNameService: PortionNameService,
               private tagService: TagService,
               private fb: FormBuilder
              ){}
@@ -47,12 +48,10 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
 
     this.ingredientForm = this.fb.group({
       id: this.ingredient.id,
-      portionType: [this.ingredient.portionType.name, Validators.required],
       name: [this.ingredient.name, Validators.required],
       image: [""],
       brand: [this.ingredient.brand],
       ean: [this.ingredient.ean],
-      portionQuantity: [this.ingredient.portionQuantity, [Validators.required, Validators.min(0), Validators.max(1000)]],
       description: [this.ingredient.description],
 
       macro: this.fb.group({
@@ -78,6 +77,11 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
       }), 
 
       tags:[], 
+      newPortion: this.fb.group({
+        name: [],
+        quantity: []
+      }),
+      portions: this.fb.array([]), 
     });
 
     this.tagService.getTagsList().subscribe(
@@ -86,9 +90,9 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
       }
     );
 
-    this.portionTypeService.getPortionTypes().subscribe(
+    this.PortionNameService.getPortionNames().subscribe(
       (data) => {
-        this.portionTypes = data;
+        this.PortionNames = data;
       }
     );  
 
@@ -101,12 +105,10 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
 
               this.ingredientForm.patchValue({
                 id: this.ingredient.id,
-                portionType: this.ingredient.portionType.name,
                 name: this.ingredient.name,
                 image: "",
                 brand: this.ingredient.brand,
                 ean: this.ingredient.ean,
-                portionQuantity: this.ingredient.portionQuantity,
                 description: this.ingredient.description,
           
                 macro: {
@@ -141,20 +143,68 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
                 this.ingredientForm.get('tags')?.setValue(tempArr);
               }
 
+              this.ingredient.portions.forEach(
+                (value, index) => {
+                  this.portions.push(this.newPortion(value));
+                }
+              )
+
+              this.portions.controls.forEach((control ,index)=> {
+                control.get('quantity')?.valueChanges.subscribe(value => {
+                  console.log("quantity", value);
+                  if(value==""){
+                    this.portions.removeAt(index, {emitEvent: false})
+                    console.log(this.portions);
+                  }
+                });
+              });
+              
+              this.ingredientForm.patchValue({macro: { kcal: this.calculateKcal(this.ingredientForm.get('macro')?.value)}}, {emitEvent: false});
               this.image.nativeElement.src= "data:image/gif;base64,"+this.ingredient.image;       
               this.subscriptions();
-              this.calculateIngredientPortion();
             }
           )
           this.requireSave = false;
         }else{
           this.subscriptions();
-          this.ingredientForm.get('portionType')?.setValue("100g")
         }
       }
     ) 
+
+
+
+    this.ingredientForm.get('macro')?.get('kcal')?.disable();
+    
   }
 
+
+  get portions() : FormArray {
+    return this.ingredientForm.get("portions") as FormArray
+  }
+
+  newPortion(portion: Portion): FormGroup {
+    return this.fb.group({
+      name: portion.name,
+      quantity: portion.quantity,
+    })
+  }
+
+  newPortionEnter(){
+    let newPortion = this.ingredientForm.get('newPortion')?.value;
+    console.log(newPortion)
+    this.portions.push(this.newPortion(new Portion(0,newPortion.name, newPortion.quantity)));
+
+    this.portions.controls.forEach((control ,index)=> {
+      control.get('quantity')?.valueChanges.subscribe(value => {
+        console.log("quantity", value);
+        if(value==""){
+          this.portions.removeAt(index, {emitEvent: false})
+          console.log(this.portions);
+        }
+      });
+    });
+    
+  }
 
   subscriptions(){
 
@@ -169,38 +219,22 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
       }
     )
 
-    this.ingredientForm.get('portionType')?.valueChanges.subscribe(
-      (value) => {
-        if(value != "100g"){
-          this.isPortionSelected = true;
-          this.calculateIngredientPortion();    
-        }else{
-          this.isPortionSelected = false;   
-        }
-      }
-    )
+
+
 
     this.ingredientForm.get('macro')?.valueChanges.subscribe(
       (value) => {
         this.ingredient.macro = value;
         this.ingredientForm.patchValue({macro: { kcal: this.calculateKcal(value)}}, {emitEvent: false});
-        this.calculateIngredientPortion();
       }
     )
 
     this.ingredientForm.get('micro')?.valueChanges.subscribe(
       (value) => {
         this.ingredient.micro = value;
-        this.calculateIngredientPortion();
       }
     )
 
-    this.ingredientForm.get('portionQuantity')?.valueChanges.subscribe(
-      (value) => {
-        this.ingredient.portionQuantity = value;
-        this.calculateIngredientPortion();
-      }
-    )
   }
 
   canExit(): Promise<boolean> {
@@ -249,23 +283,26 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
   }
 
   onSubmit(){
-    if(this.ingredientForm.get('portionType')?.value == "100g"){ 
-      this.ingredientForm.get('portionType')?.setValue("100g")    
-      this.ingredient = this.ingredientForm.value;
-      this.ingredient.portionQuantity = "100"
-    }else{
-      
-      this.ingredient = this.ingredientForm.value;
-    }
+
     console.log(this.ingredient);
+
+    this.ingredient.portions = [];
+    if(this.ingredientForm.get('portions')?.value != null){
+      this.ingredientForm.get('portions')?.value.forEach((value: any)=>{
+        this.ingredient.portions.push(value);
+      })
+    }
     this.ingredient.tags = [];
     if(this.ingredientForm.get('tags')?.value != null){
       this.ingredientForm.get('tags')?.value.forEach((value: any)=>{
         this.ingredient.tags.push(this.allTags.find(t => t.name == value)!);
       })
     }
-    this.ingredient.portionType = this.portionTypes.find(x => x.name == this.ingredientForm.get('portionType')?.value)!;
+  
     this.ingredient.image = this.image64base;
+    this.ingredient.macro.kcal = this.calculateKcal(this.ingredient.macro)
+
+    console.log(this.ingredient)
 
     if(this.ingredient.id==0){
       this.ingredientService.addIngredient(this.ingredient).subscribe();
@@ -274,33 +311,13 @@ export class IngredientDetailsComponent implements OnInit, IDeactivateComponent{
     }
     this.requireSave = false;
 
-    this.router.navigate(['ingredients']);
+    //this.router.navigate(['ingredients']);
   }
 
   calculateKcal(macro: Macronutrients){
     return ((+macro.proteins!*4)+(+macro.carbohydrates!*4)+(+macro.fat!*9)).toFixed(1).toString();
   }
 
-  calculateIngredientPortion(){
-    var multiplier: number = +this.ingredient.portionQuantity/100;
-    
-    this.portionMacro.proteins = (+this.ingredient.macro.proteins! * multiplier).toFixed(1).toString();
-    this.portionMacro.carbohydrates = (+this.ingredient.macro.carbohydrates! * multiplier).toFixed(1).toString();
-    this.portionMacro.fat = (+this.ingredient.macro.fat! * multiplier).toFixed(1).toString();
-    this.portionMacro.fibers = (+this.ingredient.macro.fibers! * multiplier).toFixed(1).toString();
-    this.portionMacro.cholesterol = (+this.ingredient.macro.cholesterol! * multiplier).toFixed(1).toString();
-    this.portionMacro.kcal = this.calculateKcal(this.portionMacro);
 
-    this.portionMicro.potassium = (+this.ingredient.micro.potassium! * multiplier).toFixed(1).toString();
-    this.portionMicro.sodium = (+this.ingredient.micro.sodium! * multiplier).toFixed(1).toString();
-    this.portionMicro.vitaminA = (+this.ingredient.micro.vitaminA! * multiplier).toFixed(1).toString();
-    this.portionMicro.vitaminC = (+this.ingredient.micro.vitaminC! * multiplier).toFixed(1).toString();
-    this.portionMicro.vitaminB6 = (+this.ingredient.micro.vitaminB6! * multiplier).toFixed(1).toString();
-    this.portionMicro.magnesium = (+this.ingredient.micro.magnesium! * multiplier).toFixed(1).toString();
-    this.portionMicro.vitaminD = (+this.ingredient.micro.vitaminD! * multiplier).toFixed(1).toString();
-    this.portionMicro.vitaminB12 = (+this.ingredient.micro.vitaminB12! * multiplier).toFixed(1).toString();
-    this.portionMicro.calcium = (+this.ingredient.micro.calcium! * multiplier).toFixed(1).toString();
-    this.portionMicro.iron = (+this.ingredient.micro.iron! * multiplier).toFixed(1).toString();
-  }
   
 }

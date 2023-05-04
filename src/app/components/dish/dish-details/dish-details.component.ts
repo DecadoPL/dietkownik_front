@@ -1,19 +1,18 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, OperatorFunction, ReplaySubject, switchMap } from 'rxjs';
 import { Dish } from 'src/app/models/dish/dish.model';
-import { PortionType } from 'src/app/models/ingredient/portionType.model';
 import { IDeactivateComponent } from 'src/app/services/can-deactivate-guard.service';
 import { DishService } from 'src/app/services/dish.service';
 import { IngredientService } from 'src/app/services/ingredient.service';
-import { PortionTypeService } from 'src/app/services/portionType.service';
 import { IngredientListItem } from 'src/app/models/ingredient/ingredientListItem.model';
 import { DishDTO } from 'src/app/models/dish/dishDTO.model';
 import { DishIngredientSave } from 'src/app/models/dish/dishIngredientSave.model';
 import { DishIngredient } from 'src/app/models/dish/dishIngredient.model';
 import { TagListItem } from 'src/app/models/shared/tagListItem.model';
 import { TagService } from 'src/app/services/tag.service';
+import { Portion } from 'src/app/models/ingredient/portion.model';
 
 
 @Component({
@@ -31,7 +30,6 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
   requireSave: boolean = false;
   alertMsg!: string;
   alert: boolean = false;
-  portionTypes!: PortionType[];
   image64base!: string;
   ingrTags!: TagListItem[];
   allTags!: TagListItem[];
@@ -40,17 +38,10 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
               private router: Router,
               private dishService: DishService,
               private ingredientService: IngredientService,
-              private portionTypeService: PortionTypeService,
               private tagService: TagService,
               private fb:FormBuilder){}  
 
   ngOnInit(){
-
-    this.portionTypeService.getPortionTypes().subscribe(
-      (data) => {
-        this.portionTypes = data;
-      }
-    )
 
     this.dishForm = this.fb.group({
       id: +this.dish.id,
@@ -97,8 +88,7 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
             (data: Dish) => {
               this.dish = data;
 
-              console.log("this.dish.ingredients", this.dish.ingredients)
-
+              console.log("this.dish", this.dish)
               this.dishForm.patchValue({
                 id: this.dish.id,
                 name: this.dish.name,
@@ -122,10 +112,41 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
               this.image.nativeElement.src  = "data:image/gif;base64,"+this.dish.image;
 
               this.dish.ingredients.forEach(
-                (value, index) => {
-                  this.ingredients.push(this.newIngredient(value));
+                (ingr, index) => {
+                  ingr.ingredient.portions.unshift(new Portion(0,"100g","100"));
+                  this.ingredients.push(this.newIngredient(ingr));
                 }
               )
+
+
+              this.ingredients.controls.forEach((control ,index)=> {
+
+                control.get('portion')?.setValue(this.dish.ingredients[index].portion.name);
+                this.updateIngredient(index,this.dish.ingredients[index].quantity, this.dish.ingredients[index].portion.name);
+                this.calculateDishMacro();
+
+                control.get('quantity')?.valueChanges.subscribe(quantity => {
+                  let portionQuantity = control.get('portion')?.value
+                  this.updateIngredient(index,quantity, portionQuantity);
+                  this.calculateDishMacro();
+                });
+
+                control.get('portion')?.valueChanges.subscribe(portion => {
+                  let quantity = control.get('quantity')?.value
+                  this.updateIngredient(index,quantity, portion);
+                  this.calculateDishMacro();
+                });
+
+              });
+
+              this.ingredients.controls.forEach((control ,index)=> {
+                if(this.dish.ingredients[index].portion.name==null){
+                  control.get('portion')?.setValue(this.dish.ingredients[0].portion.name);
+                }else{
+                  control.get('portion')?.setValue(this.dish.ingredients[index].portion.name);
+                }
+              });
+
 
               this.dishForm.statusChanges.subscribe(
                 (status) =>{
@@ -137,14 +158,7 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
                   this.requireSave = true;
                 }
               )
-          
-              this.ingredients.controls.forEach((control ,index)=> {
-                this.updateIngredient(index,control.get('portionQuantity')?.value); 
-                control.get('portionQuantity')?.valueChanges.subscribe(value => {
-                  this.updateIngredient(index, value);
-                  this.calculateDishMacro();
-                });
-              });
+
 
               this.calculateDishMacro();
 
@@ -173,8 +187,8 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
     )
   }
 
-  changePortionType(index: number, name: any){
-    var selectEl = document.getElementById("portionType");
+  changePortionName(index: number, name: any){
+    var selectEl = document.getElementById("portions");
     selectEl!.style.width = (+this.getTextWidth(name.value)+25) + "px";
   }
 
@@ -207,9 +221,9 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
     })
 
     const portions = this.dishForm.get('portions')?.value
-    console.log("portions", portions)
 
     this.ingredients.controls.forEach((control)=> {
+      console.log(control.value)
       this.dishForm.patchValue({
         macro:{
           proteins: (+this.dishForm.get('macro')?.get('proteins')?.value + (+control.get('proteins')?.value)/portions).toFixed(1).toString(),
@@ -314,11 +328,11 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
             id: 0,
             ingredientId: value.get('id')?.value,
             dishId: +this.dishForm.get('id')?.value,
-            portionTypeId: this.portionTypes.find(x => x.name == value.get('portionType')?.value)!.id,
-            portionQuantity: value.get('portionQuantity')?.value,
+            portionNameId: this.dish.ingredients[index].portion.id,
+            quantity: value.get('quantity')?.value.toString()
           }
           dishDTO.ingredients.push(dishIngrDTO);
-  
+
         }
       )
     }
@@ -331,11 +345,9 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
       } 
       this.requireSave = false;
 
-      this.router.navigate(['dishes']);
+      //this.router.navigate(['dishes']);
     }
   }
-
-
 
   get ingredients() : FormArray {
     return this.dishForm.get("ingredients") as FormArray
@@ -349,8 +361,8 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
       carbohydrates: ingr.ingredient.macro.carbohydrates,
       fat: ingr.ingredient.macro.fat,
       kcal: ingr.ingredient.macro.kcal,
-      portionQuantity: ingr.portionQuantity,
-      portionType: ingr.portionType.name,
+      portion: ['100g', Validators.required],
+      quantity: ingr.quantity,
     })
   }
 
@@ -358,24 +370,34 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
     if(this.newIngr != undefined){
       this.ingredientService.getIngredient(this.newIngr.id).subscribe(
         (data) => {
-          var tmpDishIngr: DishIngredient = ({
+          var dishIngr: DishIngredient = ({
             id:  this.ingredients.controls.length,
             ingredient: data,
-            portionQuantity: "1",
-            portionType: new PortionType(0,"100g")
+            quantity: "1",
+            portion: new Portion(0,"100g","100")
           })
-          this.ingredients.push(this.newIngredient(tmpDishIngr));
-          this.dish.ingredients.push(tmpDishIngr);
+
+          dishIngr.ingredient.portions.unshift(new Portion(0,"100g","100"))
+          this.ingredients.push(this.newIngredient(dishIngr));
+          this.dish.ingredients.push(dishIngr);
 
           this.ingredients.controls.forEach((control ,index)=> {
-            control.get('portionQuantity')?.valueChanges.subscribe(value => {
-              this.updateIngredient(index, value);
+            control.get('quantity')?.valueChanges.subscribe(quantity => {
+              let portionQuantity = control.get('portion')?.value
+              this.updateIngredient(index,quantity, portionQuantity);
               this.calculateDishMacro();
             });
           });
 
+          this.ingredients.controls.forEach((control ,index)=> {
+            control.get('portion')?.valueChanges.subscribe(portion => {
+              let quantity = control.get('quantity')?.value
+              this.updateIngredient(index,quantity, portion);
+              this.calculateDishMacro();
+            });
+          });
+          this.calculateDishMacro();
         });
-
         const input = document.getElementById('ingredientSearchInput') as HTMLInputElement;
         if (input) {
           input.value = '';
@@ -388,15 +410,26 @@ export class DishDetailsComponent implements OnInit, IDeactivateComponent{
   removeIngredient(i:number) {
     this.ingredients.removeAt(i);
     this.dish.ingredients.splice(i,1);
+    this.calculateDishMacro();
   }
 
-  updateIngredient(index:number, portionQuantity: string){
+  updateIngredient(index:number, ingrQuantity:string, portionQuantityName: string){
     const precision = 1;
+    let portionQuantityNumber = 1;
+
+    if(portionQuantityName != null){
+      const portionQuantityIndex = this.dish.ingredients[index].ingredient.portions.findIndex(x=>x.name==portionQuantityName);
+      portionQuantityNumber = (+this.dish.ingredients[index].ingredient.portions[portionQuantityIndex].quantity/100);
+      this.dish.ingredients[index].portion = this.dish.ingredients[index].ingredient.portions[portionQuantityIndex];
+    }else{
+      this.dish.ingredients[index].portion = this.dish.ingredients[index].ingredient.portions[0];
+    }
+
     this.ingredients.controls[index].patchValue({  
-      proteins: (+this.dish.ingredients[index].ingredient.macro.proteins * +portionQuantity).toFixed(precision).toString(),
-      carbohydrates: (+this.dish.ingredients[index].ingredient.macro.carbohydrates * +portionQuantity).toFixed(precision).toString(),
-      fat: (+this.dish.ingredients[index].ingredient.macro.fat * +portionQuantity).toFixed(precision).toString(),
-      kcal: (+this.dish.ingredients[index].ingredient.macro.kcal * +portionQuantity).toFixed(precision).toString(),
+      proteins: (+this.dish.ingredients[index].ingredient.macro.proteins *portionQuantityNumber* +ingrQuantity).toFixed(precision).toString(),
+      carbohydrates: (+this.dish.ingredients[index].ingredient.macro.carbohydrates * +ingrQuantity).toFixed(precision).toString(),
+      fat: (+this.dish.ingredients[index].ingredient.macro.fat * +ingrQuantity).toFixed(precision).toString(),
+      kcal: (+this.dish.ingredients[index].ingredient.macro.kcal * +ingrQuantity).toFixed(precision).toString(),
     });
   }
 }

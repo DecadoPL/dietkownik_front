@@ -1,0 +1,23 @@
+.shopping-list-container{
+  margin: 10px;
+  max-width: 500px;
+  justify-content: center;
+  align-items: center;
+}
+.grid-unchecked-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  align-items: center;
+  
+}
+
+.grid-checked-container {
+  background-color: grey;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  align-items: center;
+}
+
+#quantity{
+  width: 50px
+}

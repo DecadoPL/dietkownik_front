@@ -2,13 +2,12 @@
 
   <app-alert [message]="alertMsg" *ngIf="alert" (cancel)="alertCancel()" (save)="alertSave()" (discard)="alertDiscard()"></app-alert>
  
-  <form [formGroup]="dishForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="dishForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()">
       <div class="row">
         <div class="col">
           
           <button type="submit" class="btn btn-primary" [disabled]="!requireSave">Save</button>
           <hr>
-          <!--DishId: {{this.dishForm.get('id')?.value}}-->
 
           <div class="formGroup">
             <label for="name">Dish name</label>
@@ -65,42 +64,33 @@
             </span>
           </div>
 
-          P:{{this.dishForm.get('macro')?.get('proteins')?.value}}   <br> 
-          C:{{this.dishForm.get('macro')?.get('carbohydrates')?.value}}   <br> 
-          F:{{this.dishForm.get('macro')?.get('fat')?.value}}   <br> 
-          K:{{this.dishForm.get('macro')?.get('kcal')?.value}}   <br> 
-
-
+          <br>
+          <p>Macro in portion</p>
+          <div class="macro-container">
+            <div class="Proteins-name">Prot</div>
+            <div class="Carbohydrates-name">Carb</div>
+            <div class="Fat-name">Fat</div>
+            <div class="Kcal-name">Kcal</div>
+            <div class="proteins">{{this.dishForm.get('macro')?.get('proteins')?.value}} </div>
+            <div class="carbohydrates">{{this.dishForm.get('macro')?.get('carbohydrates')?.value}}</div>
+            <div class="fat">{{this.dishForm.get('macro')?.get('fat')?.value}} </div> 
+            <div class="kcal">{{this.dishForm.get('macro')?.get('kcal')?.value}}</div>
+          </div>
+          <br>
+          <p>Macro total</p>
+          <div class="macro-container">
+            <div class="Proteins-name">Prot</div>
+            <div class="Carbohydrates-name">Carb</div>
+            <div class="Fat-name">Fat</div>
+            <div class="Kcal-name">Kcal</div>
+            <div class="proteins">{{this.dishForm.get('macro')?.get('proteins')?.value*dishForm.get('portions')?.value}} </div>
+            <div class="carbohydrates">{{this.dishForm.get('macro')?.get('carbohydrates')?.value*dishForm.get('portions')?.value}}</div>
+            <div class="fat">{{this.dishForm.get('macro')?.get('fat')?.value*dishForm.get('portions')?.value}} </div> 
+            <div class="kcal">{{this.dishForm.get('macro')?.get('kcal')?.value*dishForm.get('portions')?.value}}</div>
+          </div>
+          <br>
         </div>
 
-        <br>
-        <table>
-          <tr *ngFor="let ingredient of ingredients.controls; let i=index" formArrayName="ingredients" >
-            <ng-container [formGroupName]="i">
-              <tr>
-                <td colspan="5">{{this.ingredient.get('name')?.value}}</td>
-              </tr>
-              <tr>              
-                <td colspan="3">Quantity: <input id="portionQuantity" type="number" formControlName="portionQuantity"></td>
-                <td colspan="2">Portion type:                
-                  <select id="portionType" formControlName="portionType" class="form-control" (change)="changePortionType(i, $event.target)">
-                    <option *ngFor="let pt of portionTypes" [value]="pt.name">
-                      {{ pt.name }}
-                    </option>
-                  </select>
-                </td>  
-              </tr>
-              <tr>
-                <td>P: {{this.ingredient.get('proteins')?.value}}</td>
-                <td>C: {{this.ingredient.get('carbohydrates')?.value}}</td>
-                <td>F: {{this.ingredient.get('fat')?.value}}</td>
-                <td>K: {{this.ingredient.get('kcal')?.value}}</td>  
-                <td><button (click)="removeIngredient(i)">Delete</button> </td>         
-              </tr>
-            </ng-container>
-          </tr>
-        </table>
-        
         <input
           id="ingredientSearchInput"
           type="text"
@@ -113,9 +103,47 @@
           [editable]="false" 
           (ngModelChange)="addIngredient()" 
         />
+        <hr>
 
-        
- 
+
+        <div class="ingr-container" *ngFor="let ingredient of ingredients.controls; let i=index" formArrayName="ingredients">
+          <ng-container [formGroupName]="i">
+            <div class="ingr-name"> 
+              {{this.ingredient.get('name')?.value}}
+            </div>
+            <div class="ingr-delete"> 
+              <button (click)="removeIngredient(i)">X</button>
+            </div>
+            <div class="ingr-quantity"> 
+              Quantity: <input id="quantity" class="form-control" type="number" formControlName="quantity">
+            </div>
+            <div class="ingr-portion"> 
+              Portion type: 
+              <select id="portion" formControlName="portion" class="form-control" (change)="changePortionName(i, $event.target)">   
+                <option *ngFor="let pt of this.dish.ingredients[i].ingredient.portions; let i = index" [selected]="i == 0" [value]="pt.name" >
+                  {{ pt.name }}: {{pt.quantity}}g
+                </option>
+              </select>              
+            </div>
+            <div class="ingr-proteins"> 
+              Prot: <br>{{this.ingredient.get('proteins')?.value}}
+            </div>
+            <div class="ingr-carbohydrates"> 
+              Carb: <br>{{this.ingredient.get('carbohydrates')?.value}}
+            </div>
+            <div class="ingr-fat"> 
+              Fat: <br>{{this.ingredient.get('fat')?.value}}
+            </div>
+            <div class="ingr-kcal"> 
+              Kcal: <br>{{this.ingredient.get('kcal')?.value}}
+            </div>
+          </ng-container>
+          <br>
+        </div>
+
+
+
+
       </div>
 
   </form>

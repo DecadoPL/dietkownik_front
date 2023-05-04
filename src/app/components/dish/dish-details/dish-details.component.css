@@ -1,3 +1,9 @@
+.container{
+  max-width: 500px;
+  justify-content: center;
+  align-items: center;
+}
+/*
 * {
     box-sizing: border-box;
     text-decoration: none;
@@ -26,4 +32,105 @@ td {
     width:100%;
     border: 1px solid black;
   }
+}
+*/
+.macro-container {
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "Proteins-name Carbohydrates-name Fat-name Kcal-name"
+    "proteins carbohydrates fat kcal"; 
+  text-align: center;
+  text-justify: distribute;
+}
+.Proteins-name { 
+  grid-area: Proteins-name;
+  border: solid black 1px;
+}
+.Carbohydrates-name { 
+  grid-area: Carbohydrates-name;
+  border: solid black 1px;
+}
+.Fat-name { 
+  grid-area: Fat-name;
+  border: solid black 1px;
+}
+.proteins { 
+  grid-area: proteins;
+  border: solid black 1px;
+}
+.carbohydrates { 
+  grid-area: carbohydrates;
+  border: solid black 1px;
+}
+.fat { 
+  grid-area: fat;
+  border: solid black 1px;
+}
+.Kcal-name { 
+  grid-area: Kcal-name;
+  border: solid black 1px;
+}
+.kcal { 
+  grid-area: kcal;
+  border: solid black 1px;
+ }
+
+#quantity{
+  text-align: center;
+  text-justify: distribute;
+}
+
+#portion{
+  text-align: center;
+  text-justify: distribute;
+}
+
+.ingr-container {
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "name name name delete"
+    "quantity portion portion portion"
+    "proteins carbohydrates fat kcal"; 
+  text-align: center;
+  text-justify: distribute;
+  
+}
+.ingr-name { 
+  grid-area: name;
+  border: solid black 1px;
+  
+ }
+.ingr-delete { 
+  grid-area: delete;
+  border: solid black 1px;
+}
+.ingr-quantity { 
+  grid-area: quantity;
+  border: solid black 1px;
+}
+.ingr-portion { 
+  grid-area: portion;
+  border: solid black 1px;
+}
+.ingr-proteins { 
+  grid-area: proteins;
+  border: solid black 1px;
+}
+.ingr-carbohydrates { 
+  grid-area: carbohydrates;
+  border: solid black 1px;
+}
+.ingr-fat { 
+  grid-area: fat;
+  border: solid black 1px;
+}
+.ingr-kcal { 
+  grid-area: kcal;
+  border: solid black 1px;
 }

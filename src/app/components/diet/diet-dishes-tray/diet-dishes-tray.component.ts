@@ -58,7 +58,11 @@ export class DietDishesTrayComponent implements OnInit, OnDestroy{
       this.dishService.getDish(this.newDish.id).subscribe(
         (dish) => {
           this.dishSelected.emit( new DietDish(0, "1/"+dish.portions,"00:00",dish.name,dish.macro,dish.micro,dish.id,dish.tags,));
-          this.unusedDishesPortions.push(new DietDish(0, +dish.portions-1+"/"+dish.portions,"00:00",dish.name,dish.macro,dish.micro,dish.id,dish.tags));
+          if(this.unusedDishesPortions.findIndex((unusedDish) => unusedDish.name == dish.name) == -1){
+            if(dish.portions != "1"){
+              this.unusedDishesPortions.push(new DietDish(0, +dish.portions-1+"/"+dish.portions,"00:00",dish.name,dish.macro,dish.micro,dish.id,dish.tags));
+            }
+          }      
         }
       )
       this.newDish = new Dish;

@@ -1,8 +1,8 @@
 <label>New portion type</label>
-<input type="text" (keydown.enter)="newPortionType($event)" class="form-control" style="width:300px;">
+<input type="text" (keydown.enter)="newPortionName($event)" class="form-control" style="width:300px;">
 List of portion types
-<div *ngFor="let pt of allPortionTypes">
-  <input type="text" [value]="pt.name" (keyup.enter)="updatePortionType($event, pt)" class="form-control" style="width:300px;">
+<div *ngFor="let pt of allPortionNames">
+  <input type="text" [value]="pt.name" (keyup.enter)="updatePortionName($event, pt)" class="form-control" style="width:300px;">
 </div>
 <hr>
 <label>New TagListItem name</label>

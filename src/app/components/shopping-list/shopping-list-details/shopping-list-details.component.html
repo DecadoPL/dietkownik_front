@@ -1,0 +1,46 @@
+<div class="shopping-list-container">
+  <form [formGroup]="shoppingListForm">
+
+    <div class="formGroup">
+      <label for="name">Shopping list name</label>
+      <input type="text" id="name" formControlName="name" class="form-control" style="width:300px;">
+    </div>
+
+    <div class="formGroup">
+      <label for="diets">Diets</label>
+      <select formControlName="diets" multiple class="form-control" style="width:300px;" #dietList>
+        <option *ngFor="let dietListItem of Diets" [value]="dietListItem.id">
+          {{ dietListItem.name }}
+        </option>
+      </select>
+    </div>
+
+  </form>
+
+  <button class="btn btn-primary" (click)="generateShoppingList()">Generate shopping list</button>
+
+    <p>To buy:</p>
+    <div class="grid-unchecked-container" *ngFor="let item of unchecked; let itemId = index">
+      <div class="grid-item"><button class="btn btn-danger" (click)="deleteItem(item)">X</button></div>
+      <div class="grid-item">{{item.name}}</div>
+      <input id ="quantity" type="text" [value]="item.quantity" (keydown.enter)="uncheckedUpdate($event, itemId)">
+      <div class="grid-item">{{item.portionName}}</div>
+      <div class="grid-item"><button class="btn btn-primary" (click)="checkItem(item)">O</button></div>
+      <p></p>
+    </div>
+    <hr>
+    <p>Bought:</p>
+    <div class="grid-checked-container" *ngFor="let item of checked">
+      <div class="grid-checked-item"><button class="btn btn-danger" (click)="deleteItem(item)">X</button></div>
+      <div class="grid-checked-item">{{item.name}}</div>
+      <div class="grid-checked-item">{{item.quantity}}</div>
+      <div class="grid-checked-item">{{item.portionName}}</div>
+      <div class="grid-checked-item"><button class="btn btn-primary" (click)="uncheckItem(item)">O</button></div>
+      <p></p>
+  </div>
+
+  <label>Aditional items</label>
+  <input type="text" (keydown.enter)="newItem($event)" class="form-control" style="width:300px;">
+</div>
+
+

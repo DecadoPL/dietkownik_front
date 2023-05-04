@@ -3,7 +3,7 @@
   <app-alert [message]="alertMsg" *ngIf="alert" (cancel)="alertCancel()" (save)="alertSave()" (discard)="alertDiscard()"></app-alert>
   
   <div class="row">
-    <form [formGroup]="ingredientForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="ingredientForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
 
       <button type="submit" class="btn btn-primary"  [disabled]="!requireSave">Save</button>
 
@@ -18,30 +18,77 @@
       </div>
 
       <div formGroupName="macro">
-        <div class="formGroup">
-          <label for="proteins">Proteins in 100g</label>
-          <input type="text" id="proteins" formControlName="proteins" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('prot')?.valid && ingredientForm.get('proteins')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
 
-        <div class="formGroup">
-          <label for="carbohydrates">Carbohydrates in 100g</label>
-          <input type="text" id="carbohydrates" formControlName="carbohydrates" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('carbohydrates')?.valid && ingredientForm.get('carbohydrates')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
+        <div class="macro-container">
+          <div class="Proteins-name"><label for="proteins">Prot</label></div>
+          <div class="Carbohydrates-name"><label for="carbohydrates">Carb</label></div>
+          <div class="Fat-name"><label for="fat">Fat</label></div>
+          <div class="Kcal-name"><label>Kcal</label></div>
+          <div class="proteins">
+            <div class="formGroup">
+              
+              <input type="text" id="proteins" formControlName="proteins" class="form-control">
+              <span *ngIf="!ingredientForm.get('prot')?.valid && ingredientForm.get('proteins')?.touched" class="text-danger">
+                Please enter a valid number from range 0 - 1000
+              </span>
+            </div>
+          </div>
+          <div class="carbohydrates">
+            <div class="formGroup">
 
-        <div class="formGroup">
-          <label for="fat">Fat in 100g</label>
-          <input type="text" id="fat" formControlName="fat" class="form-control" style="width:300px;">
-          <span *ngIf="!ingredientForm.get('fat')?.valid && ingredientForm.get('fat')?.touched" class="text-danger">
-            Please enter a valid number from range 0 - 1000
-          </span>
-        </div>
+              <input type="text" id="carbohydrates" formControlName="carbohydrates" class="form-control">
+              <span *ngIf="!ingredientForm.get('carbohydrates')?.valid && ingredientForm.get('carbohydrates')?.touched" class="text-danger">
+                Please enter a valid number from range 0 - 1000
+              </span>
+            </div>
+          </div>
+          <div class="fat">
+            <div class="formGroup">
+              
+              <input type="text" id="fat" formControlName="fat" class="form-control">
+              <span *ngIf="!ingredientForm.get('fat')?.valid && ingredientForm.get('fat')?.touched" class="text-danger">
+                Please enter a valid number from range 0 - 1000
+              </span>
+            </div>
+          </div>
 
+          <div class="kcal">
+            <input type="text" id="kcal" formControlName="kcal" class="form-control" [value]="this.ingredientForm.get('macro')?.get('kcal')?.value">
+            
+          </div>
+        </div>
+      </div>
+        <hr>
+
+        <div formGroupName="newPortion">
+          <div class="formGroup">
+            <label for="name">Portion name</label>
+            <select id="name" formControlName="name" class="form-control">
+              <option *ngFor="let pt of PortionNames" [value]="pt.name">
+                {{ pt.name }}
+              </option>
+            </select>
+          </div>
+          <label for="quantity">Portion quantity in grams</label>
+          <input type="text" id="quantity" formControlName="quantity" class="form-control" style="width:300px;" (keydown.enter)="newPortionEnter()">
+        </div>
+        
+        <hr>
+  
+        <tr *ngFor="let portion of portions.controls; let i=index" formArrayName="portions">
+          <ng-container [formGroupName]="i">
+  
+            <p>nazwa {{this.portion.get('name')?.value}}</p>
+            <input id="quantity" type="text" formControlName="quantity">
+            
+          </ng-container>
+        </tr>
+  
+        <hr>
+
+      
+
+      <div formGroupName="macro">
         <div class="formGroup">
           <label for="fibers">Fiber in 100g</label>
           <input type="text" id="fibers" formControlName="fibers" class="form-control" style="width:300px;">
@@ -57,12 +104,10 @@
             Please enter a valid number from range 0 - 1000
           </span>
         </div>
-
-        <div class="formGroup">
-          <label for="kcal">Kcal in 100g: </label>
-          {{this.ingredientForm.get('macro')?.get('kcal')?.value}}
-        </div>
       </div>
+
+
+
 
       <div class="formGroup">
         <label for="tags">Tags</label>
@@ -74,22 +119,9 @@
       </div>
       
 
-      <div class="formGroup">
-        <label for="portionType">Portion Type</label>
-        <select   formControlName="portionType" class="form-control" style="width:300px;">
-          <option *ngFor="let pt of portionTypes" [value]="pt.name">
-            {{ pt.name }}
-          </option>
-        </select>
-      </div>
 
-      <div class="formGroup">
-        <label for="portionQuantity">Portion Quantity</label>
-        <input type="text" id="portionQuantity" formControlName="portionQuantity" class="form-control" style="width:300px;">
-        <span *ngIf="!ingredientForm.get('portionQuantity')?.valid && ingredientForm.get('portionQuantity')?.touched" class="text-danger">
-          Please enter a valid amount from range 0 - 1000
-        </span>
-      </div>
+      
+      
 
       <div class="formGroup">
         <label for="image">Image</label>
@@ -205,32 +237,6 @@
         </div>
 
       </div>
-      
-      
-        <p>Macro & micro in portion</p>
-        <ul >
-          <li>Macro:</li>
-          <li> Proteins: {{portionMacro.proteins}}</li>
-          <li> Carbohydrates: {{portionMacro.carbohydrates}}</li>
-          <li> Fat: {{portionMacro.fat}}</li>
-          <li> Fibers: {{portionMacro.fibers}}</li>
-          <li> Kcal: {{portionMacro.kcal}}</li>
-          <li> Cholesterol: {{portionMacro.cholesterol}}</li>
-          <li>Micro:</li>
-          <li> Potassium: {{portionMicro.potassium}}</li>
-          <li> Sodium: {{portionMicro.sodium}}</li>
-          <li> VitaminA: {{portionMicro.vitaminA}}</li>
-          <li> VitaminC: {{portionMicro.vitaminC}}</li>
-          <li> VitaminB6: {{portionMicro.vitaminB6}}</li>
-          <li> Magnesium: {{portionMicro.magnesium}}</li>
-          <li> VitaminD: {{portionMicro.vitaminD}}</li>
-          <li> VitaminB12: {{portionMicro.vitaminB12}}</li>
-          <li> Calcium: {{portionMicro.calcium}}</li>
-          <li> Iron: {{portionMicro.iron}}</li>          
-        </ul>
-      
-
-
 
     </form>
 

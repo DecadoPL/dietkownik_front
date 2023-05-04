@@ -16,7 +16,7 @@ import { IDeactivateComponent } from 'src/app/services/can-deactivate-guard.serv
 import { DietService } from 'src/app/services/diet.service';
 import { DishService } from 'src/app/services/dish.service';
 import { DietRequirementsService } from 'src/app/services/dietRequirements.service';
-import { ShoppingListItem } from 'src/app/models/shoppingListItem.model';
+import { ShoppingListItem } from 'src/app/models/shoppingList/shoppingListItem.model';
 import { CdkDragDrop} from '@angular/cdk/drag-drop';
 import { cloneDeep } from 'lodash';
 

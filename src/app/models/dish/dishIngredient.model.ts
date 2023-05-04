@@ -1,21 +1,21 @@
 import { Ingredient } from "../ingredient/ingredient.model";
-import { PortionType } from "../ingredient/portionType.model";
+import { Portion } from "../ingredient/portion.model";
 
 export class DishIngredient{
   public id: number;
   public ingredient: Ingredient;
-  public portionQuantity: string;
-  public portionType: PortionType;
+  public portion: Portion;
+  public quantity: string;
 
   constructor(
     id: number,
     ingredient: Ingredient,
-    portionQuantity: string,
-    portionType: PortionType
+    portion: Portion,
+    quantity: string,
   ){
     this.id = id;
     this.ingredient = ingredient;
-    this.portionQuantity = portionQuantity;
-    this.portionType = portionType;
+    this.portion = portion;
+    this.quantity = quantity;
   }
 }

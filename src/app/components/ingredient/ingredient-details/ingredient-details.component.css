@@ -1,0 +1,24 @@
+.container{
+  margin: 10px;
+  max-width: 500px;
+  justify-content: center;
+  align-items: center;
+}
+
+.macro-container {
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "Proteins-name Carbohydrates-name Fat-name Kcal-name"
+    "proteins carbohydrates fat kcal"; 
+}
+.Proteins-name { grid-area: Proteins-name; }
+.Carbohydrates-name { grid-area: Carbohydrates-name; }
+.Fat-name { grid-area: Fat-name; }
+.proteins { grid-area: proteins; }
+.carbohydrates { grid-area: carbohydrates; }
+.fat { grid-area: fat; }
+.Kcal-name { grid-area: Kcal-name; }
+.kcal { grid-area: kcal; }

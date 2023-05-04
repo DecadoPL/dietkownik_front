@@ -35,3 +35,8 @@
   width:100%
 }
 
+tr, td, th{
+  border: solid black 1px;
+}
+
+

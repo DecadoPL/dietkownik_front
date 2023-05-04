@@ -1,0 +1,23 @@
+<div class="container">
+
+  <button class="btn btn-primary" routerLink="/shoppingList/new">Add new</button>
+  <hr>
+
+  <div *ngIf="!shoppingLists">
+    <span class="sr-only">Loading...</span> 
+    <br>
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <table *ngIf="shoppingLists">
+    <tr *ngFor="let shoppingList of shoppingLists">
+      <th style="width:300px;"> <app-shopping-list-list-item
+        [shoppingList]="shoppingList"
+        [index]="shoppingList.id"
+        ></app-shopping-list-list-item></th>
+      <th><button (click)="deleteItem(shoppingList.id)">delete</button></th>
+
+    </tr>
+  </table>
+
+</div>
